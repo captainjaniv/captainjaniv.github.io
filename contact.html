@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צור קשר</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>צור קשר</h1>
+    </header>
+
+    <section id="contact-us">
+        <form action="/submit_contact" method="POST">
+            <label for="name">שם:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="email">אימייל:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="message">הודעה:</label>
+            <textarea id="message" name="message"></textarea>
+            
+            <button type="submit">שליחה</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>© 2024 Explorely. כל הזכויות שמורות.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תכננו את המסע שלכם</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Explorely - תכננו את המסע שלכם</h1>
+    </header>
+
+    <section id="trip-form">
+        <h2>תכננו את המסע שלכם</h2>
+        <form action="/submit_trip" method="POST">
+            <label for="budget">תקציב:</label>
+            <input type="number" id="budget" name="budget" placeholder="₪" required>
+            
+            <label for="duration">משך המסע (ימים):</label>
+            <input type="number" id="duration" name="duration" required>
+            
+            <label for="transportation">דרכי תחבורה:</label>
+            <select id="transportation" name="transportation" multiple>
+                <option value="flight">טיסה</option>
+                <option value="train">רכבת</option>
+                <option value="taxi">מונית</option>
+                <option value="car">רכב שכור</option>
+            </select>
+            
+            <button type="submit">הזמינו עכשיו</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>© 2024 Explorely. כל הזכויות שמורות.</p>
+    </footer>
+</body>
+</html>
