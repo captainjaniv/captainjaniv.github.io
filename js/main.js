@@ -64,4 +64,5 @@ function logout() {
 }
 
 // Load profile on page
+document.addEventListener("DOMContentLoaded", showProfile);
 
