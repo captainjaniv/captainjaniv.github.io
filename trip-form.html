@@ -1,27 +1,61 @@
-<section id="trip-form">
-    <h2>Plan Your Trip</h2>
-    <form action="/submit_trip" method="POST">
-        <label for="budget">Budget:</label>
-        <input type="number" id="budget" name="budget" placeholder="$" required>
-
-        <label for="duration">Trip Duration (Days):</label>
-        <input type="number" id="duration" name="duration" required>
-
-        <label for="transportation">Preferred Transportation:</label>
-        <div class="transportation-options">
-            <input type="checkbox" id="flight" name="transportation" value="flight">
-            <label for="flight">Flight</label>
-
-            <input type="checkbox" id="train" name="transportation" value="train">
-            <label for="train">Train</label>
-
-            <input type="checkbox" id="taxi" name="transportation" value="taxi">
-            <label for="taxi">Taxi</label>
-
-            <input type="checkbox" id="car" name="transportation" value="car">
-            <label for="car">Rental Car</label>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Your Trip - Explorely</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="images/logo.png" alt="Explorely Logo">
         </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="trip-form.html">Plan a Trip</a></li>
+                <li><a href="my-trips.html">My Trips</a></li>
+                <li><a href="rewards.html">Rewards</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <button type="submit">Submit</button>
-    </form>
-</section>
+    <main>
+        <section id="trip-form">
+            <h2>Plan Your Trip</h2>
+            <p>Choose your budget, trip duration, and preferred modes of transportation. We'll surprise you with a unique adventure!</p>
+            <form action="/submit_trip" method="POST">
+                <label for="budget">Budget:</label>
+                <input type="number" id="budget" name="budget" placeholder="$" required>
+
+                <label for="duration">Trip Duration (Days):</label>
+                <input type="number" id="duration" name="duration" required>
+
+                <label for="transportation">Preferred Transportation:</label>
+                <div class="transportation-options">
+                    <input type="checkbox" id="flight" name="transportation" value="flight">
+                    <label for="flight">Flight</label>
+
+                    <input type="checkbox" id="train" name="transportation" value="train">
+                    <label for="train">Train</label>
+
+                    <input type="checkbox" id="taxi" name="transportation" value="taxi">
+                    <label for="taxi">Taxi</label>
+
+                    <input type="checkbox" id="car" name="transportation" value="car">
+                    <label for="car">Rental Car</label>
+                </div>
+
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Explorely. All rights reserved.</p>
+    </footer>
+</body>
+</html>
