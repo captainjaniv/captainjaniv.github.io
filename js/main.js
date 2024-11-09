@@ -3,6 +3,27 @@ function submitForm() {
     alert("Form submitted successfully!");
 }
 
+// Fetch user's location
+async function fetchLocation() {
+    try {
+        const response = await fetch("https://ipgeolocation.io/json");
+        const data = await response.json();
+        document.getElementById("location").value = data.city + ", " + data.country_name;
+    } catch (error) {
+        console.error("Location detection failed:", error);
+    }
+}
+
+// Update currency symbol
+document.getElementById("currency").addEventListener("change", function() {
+    const currencySymbols = { USD: "$", EUR: "€", ILS: "₪", GBP: "£" };
+    const selectedCurrency = this.value;
+    document.getElementById("currencySymbol").textContent = currencySymbols[selectedCurrency] || "$";
+});
+
+// Run location fetch on load
+document.addEventListener("DOMContentLoaded", fetchLocation);
+
 // Generate a unique username with two random words from an API + a 6-digit number
 async function generateUser() {
     try {
