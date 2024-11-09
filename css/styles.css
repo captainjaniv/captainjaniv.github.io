@@ -1,4 +1,4 @@
-/* General Styling */
+/* Basic Styles */
 body, html {
     margin: 0;
     padding: 0;
@@ -10,6 +10,7 @@ body, html {
     min-height: 100vh;
 }
 
+/* Header and Navigation */
 header {
     background-color: #004080;
     color: white;
@@ -41,45 +42,47 @@ nav ul li a {
     font-weight: bold;
 }
 
-nav ul li a:hover {
-    text-decoration: underline;
-}
-
-main {
-    flex: 1;
+.user-controls {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
+}
+
+/* Form and Input Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="number"],
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+.transportation-options label {
+    margin-left: 5px;
+}
+
+/* Modal Styling */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
     padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 1000;
 }
 
-.intro h1 {
-    font-size: 2.5rem;
-    color: #004080;
-}
-
-.intro p {
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.intro button {
-    background-color: #ff6600;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 15px;
-}
-
-.intro button:hover {
-    background-color: #e65c00;
-}
-
+/* Footer */
 footer {
     background-color: #004080;
     color: white;

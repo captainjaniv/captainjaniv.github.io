@@ -6,6 +6,7 @@
     <title>Plan Your Trip - Explorely</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <script defer src="js/main.js"></script>
 </head>
 <body>
     <header>
@@ -21,34 +22,44 @@
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
+        <div class="user-controls">
+            <button id="loginButton" onclick="showLoginForm()">Login</button>
+            <div id="profileInfo" style="display: none;">
+                <p>Welcome, <span id="usernameDisplay"></span></p>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
     </header>
 
     <main>
         <section id="trip-form">
-            <h2>Plan Your Trip</h2>
+            <h1>Plan Your Trip</h1>
             <p>Choose your budget, trip duration, and preferred modes of transportation. We'll surprise you with a unique adventure!</p>
             <form action="/submit_trip" method="POST">
-                <label for="budget">Budget:</label>
-                <input type="number" id="budget" name="budget" placeholder="$" required>
-
-                <label for="duration">Trip Duration (Days):</label>
-                <input type="number" id="duration" name="duration" required>
-
-                <label for="transportation">Preferred Transportation:</label>
-                <div class="transportation-options">
-                    <input type="checkbox" id="flight" name="transportation" value="flight">
-                    <label for="flight">Flight</label>
-
-                    <input type="checkbox" id="train" name="transportation" value="train">
-                    <label for="train">Train</label>
-
-                    <input type="checkbox" id="taxi" name="transportation" value="taxi">
-                    <label for="taxi">Taxi</label>
-
-                    <input type="checkbox" id="car" name="transportation" value="car">
-                    <label for="car">Rental Car</label>
+                <div class="form-group">
+                    <label for="budget">Budget:</label>
+                    <input type="number" id="budget" name="budget" placeholder="$" required>
                 </div>
+                <div class="form-group">
+                    <label for="duration">Trip Duration (Days):</label>
+                    <input type="number" id="duration" name="duration" required>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Transportation:</label>
+                    <div class="transportation-options">
+                        <input type="checkbox" id="flight" name="transportation" value="flight">
+                        <label for="flight">Flight</label><br>
 
+                        <input type="checkbox" id="train" name="transportation" value="train">
+                        <label for="train">Train</label><br>
+
+                        <input type="checkbox" id="taxi" name="transportation" value="taxi">
+                        <label for="taxi">Taxi</label><br>
+
+                        <input type="checkbox" id="car" name="transportation" value="car">
+                        <label for="car">Rental Car</label>
+                    </div>
+                </div>
                 <button type="submit">Submit</button>
             </form>
         </section>
@@ -57,5 +68,21 @@
     <footer>
         <p>&copy; 2024 Explorely. All rights reserved.</p>
     </footer>
+
+    <!-- Hidden Login Form -->
+    <div id="loginForm" class="modal" style="display:none;">
+        <h2>Login</h2>
+        <form onsubmit="loginUser(event)">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required readonly>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+            <button type="button" onclick="generateUser()">Generate Username</button>
+            <button type="button" onclick="googleLogin()">Login with Google</button>
+        </form>
+    </div>
 </body>
 </html>

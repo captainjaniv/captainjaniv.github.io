@@ -6,6 +6,7 @@
     <title>Explorely - Unexpected Destinations</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <script defer src="js/main.js"></script>
 </head>
 <body>
     <header>
@@ -21,6 +22,13 @@
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
+        <div class="user-controls">
+            <button id="loginButton" onclick="showLoginForm()">Login</button>
+            <div id="profileInfo" style="display: none;">
+                <p>Welcome, <span id="usernameDisplay"></span></p>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
     </header>
 
     <main>
@@ -34,5 +42,21 @@
     <footer>
         <p>&copy; 2024 Explorely. All rights reserved.</p>
     </footer>
+
+    <!-- Hidden Login Form -->
+    <div id="loginForm" class="modal" style="display:none;">
+        <h2>Login</h2>
+        <form onsubmit="loginUser(event)">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required readonly>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+            <button type="button" onclick="generateUser()">Generate Username</button>
+            <button type="button" onclick="googleLogin()">Login with Google</button>
+        </form>
+    </div>
 </body>
 </html>
