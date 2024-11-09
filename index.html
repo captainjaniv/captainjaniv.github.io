@@ -3,27 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorely - מסעות מפתיעים בכל יעד!</title>
+    <title>Explorely - Unexpected Destinations</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header>
-        <h1>Explorely</h1>
-        <p>בואו לחוות מסעות מרגשים ברחבי העולם בלי לדעת מה היעד הבא!</p>
-        <button onclick="location.href='trip-form.html'">תכננו מסע</button>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="images/logo.png" alt="Explorely Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="trip-form.html">Plan a Trip</a></li>
+                <li><a href="my-trips.html">My Trips</a></li>
+                <li><a href="rewards.html">Rewards</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <section id="benefits">
-        <h3>למה לבחור ב-Explorely?</h3>
-        <ul>
-            <li>מסעות לכל תקציב</li>
-            <li>יעדים לא צפויים</li>
-            <li>נקודות והטבות למשתמשים חוזרים</li>
-        </ul>
-    </section>
+    <main>
+        <section class="intro">
+            <h1>Welcome to Explorely</h1>
+            <p>Discover new adventures with every journey! Plan a trip without knowing the destination and let us surprise you.</p>
+            <button onclick="window.location.href='trip-form.html'">Plan Your Trip</button>
+        </section>
+    </main>
 
     <footer>
-        <p>© 2024 Explorely. כל הזכויות שמורות.</p>
+        <p>&copy; 2024 Explorely. All rights reserved.</p>
     </footer>
 </body>
 </html>
