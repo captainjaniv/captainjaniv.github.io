@@ -39,6 +39,27 @@ window.showSignUp = function() {
     document.getElementById("modalTitle").textContent = "Sign Up";
 }
 
+// Generate a unique username with two random words from an API + a 6-digit number
+window.generateUser = async function() {
+    try {
+        const response1 = await fetch("https://random-word-api.herokuapp.com/word?number=1");
+        const response2 = await fetch("https://random-word-api.herokuapp.com/word?number=1");
+        const word1 = await response1.json();
+        const word2 = await response2.json();
+        const randomNumber = Math.floor(100000 + Math.random() * 900000);
+        const username = `${capitalize(word1[0])}${capitalize(word2[0])}${randomNumber}`;
+        document.getElementById("signup-username").value = username;
+    } catch (error) {
+        console.error("Error fetching words:", error);
+        alert("Could not generate a username. Please try again.");
+    }
+}
+
+// Helper function to capitalize the first letter of each word
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 // Firebase Authentication - Sign Up with Email and Password
 window.signUpUser = function(event) {
     event.preventDefault();

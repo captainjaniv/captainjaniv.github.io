@@ -62,7 +62,7 @@ header nav ul li a:hover, header #loginButton:hover {
 }
 
 h1, p {
-    color: #003366;
+    color: #FFA726;
 }
 
 input[type="number"],
@@ -80,7 +80,7 @@ select {
 label {
     display: block;
     font-weight: bold;
-    color: #003366;
+    color: #FFA726;
     margin-top: 15px;
 }
 
@@ -155,7 +155,7 @@ footer {
 }
 
 .tab-buttons button {
-    background: #003366;
+    background: #6A1B9A;
     color: white;
     border: none;
     padding: 5px 10px;
