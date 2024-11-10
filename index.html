@@ -9,25 +9,23 @@
     <script type="module" src="js/main.js"></script>
 </head>
 <body>
-    <header>
+     <header>
         <div class="logo" onclick="window.location.href='index.html'">
-            <img src="images/logo.png" alt="Explorely Logo">
+            <img src="images/logo.png" alt="Explorely Logo" class="header-logo">
         </div>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="trip-form.html">Plan a Trip</a></li>
-                <li><a href="my-trips.html">My Trips</a></li>
-                <li><a href="rewards.html">Rewards</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="trip-form.html">Plan</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact-Us</a></li>
+                <li><a href="destinations.html">Destinations</a></li>
+                <li><button id="loginButton" onclick="showLoginForm()">Login</button></li>
             </ul>
         </nav>
-        <div class="user-controls">
-            <button id="loginButton" onclick="showLoginForm()">Login</button>
-            <div id="profileInfo" style="display: none;">
-                <p>Welcome, <span id="usernameDisplay"></span></p>
-                <button onclick="logout()">Logout</button>
-            </div>
+        <div id="profileInfo" style="display: none;">
+            <p>Welcome, <span id="usernameDisplay"></span></p>
+            <button onclick="logout()">Logout</button>
         </div>
     </header>
 
