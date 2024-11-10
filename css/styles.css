@@ -22,7 +22,8 @@ header {
 }
 
 header .logo img {
-    width: 10%; /* Adjust logo size to fit header */
+    align-items: center;
+    width: 5%; /* Adjust logo size to fit header */
     cursor: pointer;
 }
 
@@ -178,18 +179,19 @@ footer {
     text-decoration: none;
 }
 
-/* Destinations Page */
 .destination {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px;
     border-bottom: 1px solid #ddd;
+    margin: 10px 0;
 }
 
 .destination img {
     width: 40%;
     border-radius: 8px;
+    max-width: 300px; /* Limit image size */
 }
 
 .destination div {
@@ -197,5 +199,6 @@ footer {
 }
 
 .destination:nth-child(even) {
-    flex-direction: row-reverse;
+    flex-direction: row-reverse; /* Alternate layout for each section */
 }
+
