@@ -1,0 +1,20 @@
+[
+    {
+        "title": "Destinations",
+        "description": "Explore unique destinations that offer a blend of cultural richness and natural beauty. Discover places you've never considered visiting and make unforgettable memories.",
+        "query": "remote travel destinations",
+        "link": "destinations.html"
+    },
+    {
+        "title": "About",
+        "description": "Learn about our mission to promote sustainable tourism and encourage travel to lesser-known locations. We’re passionate about connecting travelers with hidden gems around the world.",
+        "query": "sustainable travel",
+        "link": "about.html"
+    },
+    {
+        "title": "Contact Us",
+        "description": "We'd love to hear from you! Whether you have a question, a suggestion, or need assistance with planning your next adventure, our team is here to help.",
+        "query": "customer support travel",
+        "link": "contact.html"
+    }
+]

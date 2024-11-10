@@ -32,59 +32,42 @@
     </header>
 
     <main>
-        <section id="trip-form" style="max-width: 50%; margin: 0 auto; text-align: center;">
+        <section id="trip-form">
             <h1>Plan Your Trip</h1>
-            <p>Start planning your journey! Choose your budget, trip duration, and mode of transportation. We'll surprise you with a unique adventure.</p>
-            <form action="/calculate_trip" method="POST">
-                <div class="form-group">
-                    <label for="location">Starting Location:</label>
-                    <input type="text" id="location" name="location" placeholder="Detecting location..." required>
-                </div>
-                <div class="form-group">
-                    <label for="currency">Preferred Currency:</label>
-                    <select id="currency" name="currency">
-                        <option value="USD">USD</option>
-                        <option value="EUR">EUR</option>
-                        <option value="ILS">ILS</option>
-                        <option value="GBP">GBP</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="budget">Budget (<span id="currencySymbol">$</span>):</label>
-                    <input type="number" id="budget" name="budget" placeholder="Amount" required>
-                </div>
-                <div class="form-group">
-                    <label for="duration">Trip Duration (Days):</label>
-                    <input type="number" id="duration" name="duration" required>
-                </div>
-                <div class="form-group">
-                    <label>Preferred Transportation:</label>
-                    <div class="transportation-options">
-                        <div>
-                            <input type="checkbox" id="flight" name="transportation" value="flight">
-                            <label for="flight">Flight</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="train" name="transportation" value="train">
-                            <label for="train">Train</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="bus" name="transportation" value="bus">
-                            <label for="bus">Bus</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="car" name="transportation" value="car">
-                            <label for="car">Rental Car</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="boat" name="transportation" value="boat">
-                            <label for="boat">Boat</label>
-                        </div>
-                    </div>
-                </div>
-                <button type="submit">Calculate Trip</button>
+            <form id="tripPlannerForm">
+                <label for="location">Starting Location:</label>
+                <input type="text" id="location" name="location" placeholder="Enter starting location" required>
+        
+                <label for="numDestinations">Number of Destinations:</label>
+                <input type="number" id="numDestinations" name="numDestinations" placeholder="e.g., 3" required>
+        
+                <label for="minDays">Minimum Days per Destination:</label>
+                <input type="number" id="minDays" name="minDays" placeholder="e.g., 2" required>
+        
+                <!-- New Preferred Currency Field -->
+                <label for="currency">Preferred Currency:</label>
+                <select id="currency" name="currency" required>
+                    <option value="USD" selected>USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="ILS">ILS (₪)</option>
+                </select>
+        
+                <label for="budget">Budget:</label>
+                <input type="number" id="budget" name="budget" placeholder="Budget in selected currency" required>
+        
+                <label for="transportation">Preferred Transportation:</label>
+                <select id="transportation" name="transportation" required>
+                    <option value="flight" selected>Flight</option>
+                    <option value="train">Train</option>
+                    <option value="bus">Bus</option>
+                    <option value="car">Rental Car</option>
+                    <option value="boat">Boat</option>
+                </select>
+        
+                <button type="submit">Plan My Trip</button>
             </form>
-        </section>
+        </section>        
     </main>
 
     <footer>

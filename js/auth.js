@@ -85,21 +85,28 @@ window.googleSignIn = function() {
         });
 }
 
-// Show profile if user is logged in
-window.showProfile = function() {
-    const username = localStorage.getItem("username");
-    if (username) {
-        document.getElementById("loginButton").style.display = "none";
-        document.getElementById("profileInfo").style.display = "flex";
-        document.getElementById("usernameDisplay").innerText = username;
-    }
-}
-
 // Logout and clear profile
 window.logout = function() {
     localStorage.removeItem("username");
     document.getElementById("loginButton").style.display = "block";
     document.getElementById("profileInfo").style.display = "none";
+}
+
+window.showProfile = function() {
+    const username = localStorage.getItem("username");
+    const profileImageUrl = localStorage.getItem("profileImageUrl");
+
+    if (username) {
+        document.getElementById("loginButton").style.display = "none";
+        const profileInfo = document.getElementById("profileInfo");
+        profileInfo.style.display = "flex";
+        profileInfo.innerHTML = `
+            <p>Welcome, <span id="usernameDisplay">${username}</span></p>
+            <a href="my-trips.html" class="profile-option">My Trips</a>
+            <button onclick="logout()">Logout</button>
+            <img src="${profileImageUrl}" alt="Profile Picture" style="border-radius: 50%; width: 40px; height: 40px;">
+        `;
+    }
 }
 
 // Load profile on page load
