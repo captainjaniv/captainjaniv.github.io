@@ -13,17 +13,20 @@ body, html {
 
 /* Header Styling */
 header {
-    background-color: #6A1B9A; /* Purple background */
-    color: white; /* Set header text color to white */
+    background-color: #6A1B9A;
+    color: white;
+    height: 7vh; /* Header height is 7% of viewport height */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
+/* Logo Styling */
 header .logo img {
-    align-items: center;
-    width: 5%; /* Adjust logo size to fit header */
+    height: 55%; /* 55% of the header’s height */
+    width: 5%;   /* 5% of the header’s width */
     cursor: pointer;
 }
 
@@ -40,7 +43,7 @@ header nav ul li {
 }
 
 header nav ul li a, header #loginButton {
-    color: white; /* Set nav links and login button text to white */
+    color: white; /* White text for nav links */
     text-decoration: none;
     font-weight: bold;
 }
@@ -55,7 +58,7 @@ header nav ul li a:hover, header #loginButton:hover {
 }
 
 #trip-form {
-    max-width: 50%;
+    max-width: 10%;
     margin: 20px auto;
     text-align: center;
     padding: 20px;

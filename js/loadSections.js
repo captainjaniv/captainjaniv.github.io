@@ -1,46 +1,49 @@
 const GEO_DB_API_KEY = "5931b2bb47msh78700b432711641p187d55jsncc429db2ba40";  // Replace with your GeoDB API key
 const UNSPLASH_ACCESS_KEY = "tcJ3Enh1Hy6wLC1X3bziB0Rc2gZlKLPEHwy4YOPvGYQ";  // Replace with your Unsplash API key
 
-async function fetchDestinations() {
+// Fetch and render sections faster using async functions
+(async function loadSections() {
     try {
-        // GeoDB API: Fetch less-touristic cities
-        const geoDbResponse = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=4&minPopulation=10000&maxPopulation=50000", {
-            method: "GET",
-            headers: {
-                "x-rapidapi-key": GEO_DB_API_KEY,
-                "x-rapidapi-host": "wft-geo-db.p.rapidapi.com"
-            }
-        });
-        const geoDbData = await geoDbResponse.json();
+        const response = await fetch('sectionsData.json');
+        const sectionsData = await response.json();
 
-        // Load each destination with its image
-        for (const city of geoDbData.data) {
-            const cityName = city.city;
+        // Get the container in which sections will be rendered
+        const container = document.getElementById('dynamic-sections');
+        if (!container) return console.error("Container for dynamic sections not found!");
 
-            // Fetch an image for the destination using Unsplash
-            const imageUrl = await fetchUnsplashImage(cityName);
+        // Load and append sections in parallel for better performance
+        await Promise.all(sectionsData.map(async (section) => {
+            const sectionElement = document.createElement('section');
+            sectionElement.className = 'dynamic-section';
 
-            // Render the destination
-            renderDestination({
-                title: cityName,
-                description: `Explore ${cityName}, a unique and less-visited location. Perfect for travelers seeking new experiences.`,
-                imageUrl: imageUrl
-            });
-        }
+            const imageElement = document.createElement('img');
+            imageElement.src = await fetchImage(section.query); // Fetch image asynchronously
+            imageElement.alt = section.title;
+
+            const titleElement = document.createElement('h2');
+            titleElement.textContent = section.title;
+
+            const descriptionElement = document.createElement('p');
+            descriptionElement.textContent = section.description;
+
+            const buttonElement = document.createElement('a');
+            buttonElement.href = section.link;
+            buttonElement.textContent = "Learn More";
+            buttonElement.className = "section-button";
+
+            sectionElement.append(imageElement, titleElement, descriptionElement, buttonElement);
+            container.appendChild(sectionElement);
+        }));
     } catch (error) {
-        console.error("Error fetching destinations:", error);
+        console.error("Error loading sections:", error);
     }
-}
+})();
 
-async function fetchUnsplashImage(query) {
-    try {
-        const unsplashResponse = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&client_id=${UNSPLASH_ACCESS_KEY}`);
-        const unsplashData = await unsplashResponse.json();
-        return unsplashData.urls.small;
-    } catch (error) {
-        console.error("Error fetching image:", error);
-        return "images/default.jpg";  // Fallback image if Unsplash API fails
-    }
+// Fetch an image asynchronously for a given query
+async function fetchImage(query) {
+    const response = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&client_id=YOUR_UNSPLASH_ACCESS_KEY`);
+    const data = await response.json();
+    return data.urls.small;
 }
 
 function renderDestination(destination) {

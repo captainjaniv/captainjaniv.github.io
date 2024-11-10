@@ -49,6 +49,20 @@ window.closeLoginForm = function() {
     document.getElementById("loginForm").style.display = "none";
 }
 
+// Show Sign In Form
+window.showSignIn = function() {
+    document.getElementById("signInForm").style.display = "flex";
+    document.getElementById("signUpForm").style.display = "none";
+    document.getElementById("modalTitle").textContent = "Sign In";
+}
+
+// Show Sign Up Form
+window.showSignUp = function() {
+    document.getElementById("signInForm").style.display = "none";
+    document.getElementById("signUpForm").style.display = "flex";
+    document.getElementById("modalTitle").textContent = "Sign Up";
+}
+
 // Show Profile UI (replaces login button)
 window.showProfile = function() {
     const username = localStorage.getItem("username");
