@@ -6,11 +6,12 @@ function submitForm() {
 // Fetch user's location
 async function fetchLocation() {
     try {
-        const response = await fetch("https://ipgeolocation.io/json");
+        const response = await fetch("https://ipwhois.app/json/");
         const data = await response.json();
-        document.getElementById("location").value = data.city + ", " + data.country_name;
+        document.getElementById("location").value = `${data.city}, ${data.country}`;
     } catch (error) {
         console.error("Location detection failed:", error);
+        document.getElementById("location").placeholder = "Unable to detect location.";
     }
 }
 
@@ -21,7 +22,17 @@ document.getElementById("currency").addEventListener("change", function() {
     document.getElementById("currencySymbol").textContent = currencySymbols[selectedCurrency] || "$";
 });
 
-// Run location fetch on load
+// Show login form
+function showLoginForm() {
+    document.getElementById("loginForm").style.display = "block";
+}
+
+// Hide login form
+function hideLoginForm() {
+    document.getElementById("loginForm").style.display = "none";
+}
+
+// Call fetchLocation on page load
 document.addEventListener("DOMContentLoaded", fetchLocation);
 
 // Generate a unique username with two random words from an API + a 6-digit number

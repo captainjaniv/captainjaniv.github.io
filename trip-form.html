@@ -11,13 +11,14 @@
 <body>
     <header>
         <div class="logo" onclick="window.location.href='index.html'">
-            <img src="images/logo.png" alt="Explorely Logo">
+            <img src="images/logo.png" alt="Explorely Logo" class="header-logo">
         </div>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="trip-form.html">Plan</a></li>
-                <li><a href="about.html">About Us</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact-Us</a></li>
                 <li><a href="destinations.html">Destinations</a></li>
                 <li><button id="loginButton" onclick="showLoginForm()">Login</button></li>
             </ul>
@@ -44,7 +45,6 @@
                         <option value="EUR">EUR</option>
                         <option value="ILS">ILS</option>
                         <option value="GBP">GBP</option>
-                        <!-- Add more currency options as needed -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -58,20 +58,26 @@
                 <div class="form-group">
                     <label>Preferred Transportation:</label>
                     <div class="transportation-options">
-                        <input type="checkbox" id="flight" name="transportation" value="flight">
-                        <label for="flight">Flight</label><br>
-
-                        <input type="checkbox" id="train" name="transportation" value="train">
-                        <label for="train">Train</label><br>
-
-                        <input type="checkbox" id="bus" name="transportation" value="bus">
-                        <label for="bus">Bus</label><br>
-
-                        <input type="checkbox" id="car" name="transportation" value="car">
-                        <label for="car">Rental Car</label><br>
-
-                        <input type="checkbox" id="boat" name="transportation" value="boat">
-                        <label for="boat">Boat</label>
+                        <div>
+                            <input type="checkbox" id="flight" name="transportation" value="flight">
+                            <label for="flight">Flight</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="train" name="transportation" value="train">
+                            <label for="train">Train</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="bus" name="transportation" value="bus">
+                            <label for="bus">Bus</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="car" name="transportation" value="car">
+                            <label for="car">Rental Car</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="boat" name="transportation" value="boat">
+                            <label for="boat">Boat</label>
+                        </div>
                     </div>
                 </div>
                 <button type="submit">Calculate Trip</button>
