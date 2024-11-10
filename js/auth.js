@@ -13,32 +13,6 @@ const firebaseConfig = {
     measurementId: "G-FYBPH901SR"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-// Functions to manage login modal
-window.showLoginForm = function() {
-    document.getElementById("loginForm").style.display = "block";
-}
-
-window.closeLoginForm = function() {
-    document.getElementById("loginForm").style.display = "none";
-}
-
-window.showSignIn = function() {
-    document.getElementById("signInForm").style.display = "flex";
-    document.getElementById("signUpForm").style.display = "none";
-    document.getElementById("modalTitle").textContent = "Sign In";
-}
-
-window.showSignUp = function() {
-    document.getElementById("signInForm").style.display = "none";
-    document.getElementById("signUpForm").style.display = "flex";
-    document.getElementById("modalTitle").textContent = "Sign Up";
-}
-
 // Generate a unique username with two random words from an API + a 6-digit number
 window.generateUser = async function() {
     try {
@@ -60,59 +34,22 @@ function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-// Firebase Authentication - Sign Up with Email and Password
-window.signUpUser = function(event) {
-    event.preventDefault();
-    const username = document.getElementById("signup-username").value;
-    const email = `${username}@example.com`;
-    const password = document.getElementById("signup-password").value;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-    createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            alert("Sign Up Successful!");
-            closeLoginForm();
-        })
-        .catch((error) => {
-            alert("Sign Up Failed: " + error.message);
-        });
+// Show login form
+window.showLoginForm = function() {
+    document.getElementById("loginForm").style.display = "block";
 }
 
-// Firebase Authentication - Sign In with Email and Password
-window.signInUser = function(event) {
-    event.preventDefault();
-    const username = document.getElementById("signin-username").value;
-    const email = `${username}@example.com`;
-    const password = document.getElementById("signin-password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            alert("Sign In Successful!");
-            closeLoginForm();
-        })
-        .catch((error) => {
-            alert("Sign In Failed: " + error.message);
-        });
+// Close login form
+window.closeLoginForm = function() {
+    document.getElementById("loginForm").style.display = "none";
 }
 
-// Firebase Authentication - Google Sign In
-window.googleSignIn = function() {
-    signInWithPopup(auth, provider)
-        .then(() => {
-            alert("Google Sign In Successful!");
-            closeLoginForm();
-        })
-        .catch((error) => {
-            alert("Google Sign In Failed: " + error.message);
-        });
-}
-
-// Logout and clear profile
-window.logout = function() {
-    localStorage.removeItem("username");
-    document.getElementById("loginButton").style.display = "block";
-    document.getElementById("profileInfo").style.display = "none";
-}
-
+// Show Profile UI (replaces login button)
 window.showProfile = function() {
     const username = localStorage.getItem("username");
     const profileImageUrl = localStorage.getItem("profileImageUrl");
@@ -130,5 +67,47 @@ window.showProfile = function() {
     }
 }
 
-// Load profile on page load
+// Google Sign-In
+window.googleSignIn = function() {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            const user = result.user;
+            localStorage.setItem("username", user.displayName);
+            localStorage.setItem("profileImageUrl", user.photoURL || "images/default-profile.png");
+            showProfile();
+            closeLoginForm();
+        })
+        .catch((error) => {
+            console.error("Google Sign In Failed:", error.message);
+        });
+}
+
+// Local Sign-In
+window.signInUser = function(event) {
+    event.preventDefault();
+    const username = document.getElementById("signin-username").value;
+    const email = `${username}@example.com`;
+    const password = document.getElementById("signin-password").value;
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            localStorage.setItem("username", username);
+            localStorage.setItem("profileImageUrl", "images/default-profile.png");  // Optional placeholder image
+            showProfile();
+            closeLoginForm();
+        })
+        .catch((error) => {
+            console.error("Sign In Failed:", error.message);
+        });
+}
+
+// Logout and clear profile info
+window.logout = function() {
+    localStorage.removeItem("username");
+    localStorage.removeItem("profileImageUrl");
+    document.getElementById("loginButton").style.display = "block";
+    document.getElementById("profileInfo").style.display = "none";
+}
+
+// Check and display profile on page load
 document.addEventListener("DOMContentLoaded", showProfile);
