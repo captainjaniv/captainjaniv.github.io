@@ -43,20 +43,41 @@
         <p>&copy; 2024 Explorely. All rights reserved.</p>
     </footer>
 
-    <!-- Hidden Login Form -->
+    <!-- Login Modal -->
     <div id="loginForm" class="modal" style="display:none;">
-        <h2>Login</h2>
-        <form onsubmit="loginUser(event)">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required readonly>
+        <div class="modal-content">
+            <span class="close-button" onclick="closeLoginForm()">×</span>
+            <h2 id="modalTitle">Sign In</h2>
+            <div class="tab-buttons">
+                <button onclick="showSignIn()">Sign In</button>
+                <button onclick="showSignUp()">Sign Up</button>
+            </div>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <!-- Sign In Form -->
+            <form id="signInForm" onsubmit="signInUser(event)">
+                <label for="signin-username">Username:</label>
+                <input type="text" id="signin-username" name="signin-username" required>
 
-            <button type="submit">Login</button>
-            <button type="button" onclick="generateUser()">Generate Username</button>
-            <button type="button" onclick="googleLogin()">Login with Google</button>
-        </form>
+                <label for="signin-password">Password:</label>
+                <input type="password" id="signin-password" name="signin-password" required>
+
+                <button type="submit">Sign In</button>
+                <button type="button" onclick="googleSignIn()">Sign In with Google</button>
+            </form>
+
+            <!-- Sign Up Form (Hidden by default) -->
+            <form id="signUpForm" style="display:none;" onsubmit="signUpUser(event)">
+                <label for="signup-username">Username:</label>
+                <input type="text" id="signup-username" name="signup-username" placeholder="Choose a username" required>
+                <button type="button" onclick="generateUser()">Generate Username</button>
+
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" name="signup-password" required>
+
+                <button type="submit">Sign Up</button>
+                <button type="button" onclick="googleSignIn()">Sign Up with Google</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

@@ -22,18 +22,51 @@ document.getElementById("currency").addEventListener("change", function() {
     document.getElementById("currencySymbol").textContent = currencySymbols[selectedCurrency] || "$";
 });
 
+// Run location fetch on load
+document.addEventListener("DOMContentLoaded", fetchLocation);
+
+// Firebase Initialization
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+// Your Firebase configuration (replace with your Firebase project settings)
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
 // Show login form
 function showLoginForm() {
     document.getElementById("loginForm").style.display = "block";
 }
 
-// Hide login form
-function hideLoginForm() {
+// Close login form
+function closeLoginForm() {
     document.getElementById("loginForm").style.display = "none";
 }
 
-// Call fetchLocation on page load
-document.addEventListener("DOMContentLoaded", fetchLocation);
+// Show Sign In Form
+function showSignIn() {
+    document.getElementById("signInForm").style.display = "flex";
+    document.getElementById("signUpForm").style.display = "none";
+    document.getElementById("modalTitle").textContent = "Sign In";
+}
+
+// Show Sign Up Form
+function showSignUp() {
+    document.getElementById("signInForm").style.display = "none";
+    document.getElementById("signUpForm").style.display = "flex";
+    document.getElementById("modalTitle").textContent = "Sign Up";
+}
 
 // Generate a unique username with two random words from an API + a 6-digit number
 async function generateUser() {
@@ -50,7 +83,7 @@ async function generateUser() {
 
         // Combine the words and number to form the username
         const username = `${capitalize(word1[0])}${capitalize(word2[0])}${randomNumber}`;
-        document.getElementById("username").value = username;
+        document.getElementById("signup-username").value = username;
     } catch (error) {
         console.error("Error fetching words:", error);
         alert("Could not generate a username. Please try again.");
@@ -60,6 +93,52 @@ async function generateUser() {
 // Helper function to capitalize the first letter of each word
 function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+// Firebase Authentication - Sign Up with Email and Password
+function signUpUser(event) {
+    event.preventDefault();
+    const username = document.getElementById("signup-username").value;
+    const email = `${username}@example.com`; // For demo, convert username to email format
+    const password = document.getElementById("signup-password").value;
+
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            alert("Sign Up Successful!");
+            closeLoginForm();
+        })
+        .catch((error) => {
+            alert("Sign Up Failed: " + error.message);
+        });
+}
+
+// Firebase Authentication - Sign In with Email and Password
+function signInUser(event) {
+    event.preventDefault();
+    const username = document.getElementById("signin-username").value;
+    const email = `${username}@example.com`; // For demo, convert username to email format
+    const password = document.getElementById("signin-password").value;
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            alert("Sign In Successful!");
+            closeLoginForm();
+        })
+        .catch((error) => {
+            alert("Sign In Failed: " + error.message);
+        });
+}
+
+// Firebase Authentication - Google Sign In
+function googleSignIn() {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            alert("Google Sign In Successful!");
+            closeLoginForm();
+        })
+        .catch((error) => {
+            alert("Google Sign In Failed: " + error.message);
+        });
 }
 
 // Password validation to ensure it meets complexity requirements
@@ -81,13 +160,6 @@ function loginUser(event) {
     localStorage.setItem("username", document.getElementById("username").value);
     showProfile();
     hideLoginForm();
-}
-
-// Google login (preparation for OAuth integration)
-function googleLogin() {
-    alert("Google login integration is in progress.");
-    // Placeholder for Google OAuth implementation
-    // Once implemented, use response to populate user profile
 }
 
 // Show profile if user is logged in
