@@ -11,9 +11,10 @@ body, html {
     text-align: center;
 }
 
+/* Header Styling */
 header {
-    background-color: #6A1B9A;
-    color: white;
+    background-color: #6A1B9A; /* Purple background */
+    color: white; /* Set header text color to white */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -25,21 +26,26 @@ header .logo img {
     cursor: pointer;
 }
 
-nav ul {
+/* Navbar Styling */
+header nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     display: flex;
 }
 
-nav ul li {
+header nav ul li {
     margin: 0 10px;
 }
 
-nav ul li a, #loginButton {
-    color: #6A1B9A;
+header nav ul li a, header #loginButton {
+    color: white; /* White text for nav links */
     text-decoration: none;
     font-weight: bold;
+}
+
+header nav ul li a:hover, header #loginButton:hover {
+    color: #FFA726; /* Orange on hover for contrast */
 }
 
 .user-controls {
@@ -168,6 +174,7 @@ footer {
     text-decoration: none;
 }
 
+/* Destinations Page */
 .destination {
     display: flex;
     align-items: center;
