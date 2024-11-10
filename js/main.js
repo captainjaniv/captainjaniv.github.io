@@ -1,7 +1,17 @@
-// main.js - פונקציות בסיסיות עבור אינטראקטיביות באתר
-function submitForm() {
-    alert("Form submitted successfully!");
-}
+// Firebase Initialization
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+// Your Firebase configuration (replace with your Firebase project settings)
+const firebaseConfig = {
+  apiKey: "AIzaSyATDQLpR_-isRU7Vnqg50tsUI8bzGOGv2E",
+  authDomain: "explorely-poc.firebaseapp.com",
+  projectId: "explorely-poc",
+  storageBucket: "explorely-poc.firebasestorage.app",
+  messagingSenderId: "642209287692",
+  appId: "1:642209287692:web:2055c2b30f59e97456a829",
+  measurementId: "G-FYBPH901SR"
+};
 
 // Fetch user's location
 async function fetchLocation() {
@@ -24,20 +34,6 @@ document.getElementById("currency").addEventListener("change", function() {
 
 // Run location fetch on load
 document.addEventListener("DOMContentLoaded", fetchLocation);
-
-// Firebase Initialization
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-
-// Your Firebase configuration (replace with your Firebase project settings)
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -145,21 +141,6 @@ function googleSignIn() {
 function validatePassword(password) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
     return passwordRegex.test(password);
-}
-
-// Local login function
-function loginUser(event) {
-    event.preventDefault();
-    const password = document.getElementById("password").value;
-    
-    if (!validatePassword(password)) {
-        alert("Password must be at least 12 characters long, with uppercase, lowercase, numbers, and special characters.");
-        return;
-    }
-
-    localStorage.setItem("username", document.getElementById("username").value);
-    showProfile();
-    hideLoginForm();
 }
 
 // Show profile if user is logged in
