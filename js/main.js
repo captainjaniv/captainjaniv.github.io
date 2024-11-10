@@ -2,16 +2,21 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// Your Firebase configuration (replace with your Firebase project settings)
+// Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyATDQLpR_-isRU7Vnqg50tsUI8bzGOGv2E",
-  authDomain: "explorely-poc.firebaseapp.com",
-  projectId: "explorely-poc",
-  storageBucket: "explorely-poc.firebasestorage.app",
-  messagingSenderId: "642209287692",
-  appId: "1:642209287692:web:2055c2b30f59e97456a829",
-  measurementId: "G-FYBPH901SR"
+    apiKey: "AIzaSyATDQLpR_-isRU7Vnqg50tsUI8bzGOGv2E",
+    authDomain: "explorely-poc.firebaseapp.com",
+    projectId: "explorely-poc",
+    storageBucket: "explorely-poc.firebasestorage.app",
+    messagingSenderId: "642209287692",
+    appId: "1:642209287692:web:2055c2b30f59e97456a829",
+    measurementId: "G-FYBPH901SR"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 // Fetch user's location
 async function fetchLocation() {
@@ -35,49 +40,35 @@ document.getElementById("currency").addEventListener("change", function() {
 // Run location fetch on load
 document.addEventListener("DOMContentLoaded", fetchLocation);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-// Show login form
-function showLoginForm() {
+// Functions to manage login modal
+window.showLoginForm = function() {
     document.getElementById("loginForm").style.display = "block";
 }
 
-// Close login form
-function closeLoginForm() {
+window.closeLoginForm = function() {
     document.getElementById("loginForm").style.display = "none";
 }
 
-// Show Sign In Form
-function showSignIn() {
+window.showSignIn = function() {
     document.getElementById("signInForm").style.display = "flex";
     document.getElementById("signUpForm").style.display = "none";
     document.getElementById("modalTitle").textContent = "Sign In";
 }
 
-// Show Sign Up Form
-function showSignUp() {
+window.showSignUp = function() {
     document.getElementById("signInForm").style.display = "none";
     document.getElementById("signUpForm").style.display = "flex";
     document.getElementById("modalTitle").textContent = "Sign Up";
 }
 
 // Generate a unique username with two random words from an API + a 6-digit number
-async function generateUser() {
+window.generateUser = async function() {
     try {
-        // Fetch two random words from the API
         const response1 = await fetch("https://random-word-api.herokuapp.com/word?number=1");
         const response2 = await fetch("https://random-word-api.herokuapp.com/word?number=1");
-
         const word1 = await response1.json();
         const word2 = await response2.json();
-
-        // Generate a random 6-digit number
         const randomNumber = Math.floor(100000 + Math.random() * 900000);
-
-        // Combine the words and number to form the username
         const username = `${capitalize(word1[0])}${capitalize(word2[0])}${randomNumber}`;
         document.getElementById("signup-username").value = username;
     } catch (error) {
@@ -92,14 +83,14 @@ function capitalize(word) {
 }
 
 // Firebase Authentication - Sign Up with Email and Password
-function signUpUser(event) {
+window.signUpUser = function(event) {
     event.preventDefault();
     const username = document.getElementById("signup-username").value;
-    const email = `${username}@example.com`; // For demo, convert username to email format
+    const email = `${username}@example.com`;
     const password = document.getElementById("signup-password").value;
 
     createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(() => {
             alert("Sign Up Successful!");
             closeLoginForm();
         })
@@ -109,14 +100,14 @@ function signUpUser(event) {
 }
 
 // Firebase Authentication - Sign In with Email and Password
-function signInUser(event) {
+window.signInUser = function(event) {
     event.preventDefault();
     const username = document.getElementById("signin-username").value;
-    const email = `${username}@example.com`; // For demo, convert username to email format
+    const email = `${username}@example.com`;
     const password = document.getElementById("signin-password").value;
 
     signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(() => {
             alert("Sign In Successful!");
             closeLoginForm();
         })
@@ -126,9 +117,9 @@ function signInUser(event) {
 }
 
 // Firebase Authentication - Google Sign In
-function googleSignIn() {
+window.googleSignIn = function() {
     signInWithPopup(auth, provider)
-        .then((result) => {
+        .then(() => {
             alert("Google Sign In Successful!");
             closeLoginForm();
         })
@@ -137,14 +128,8 @@ function googleSignIn() {
         });
 }
 
-// Password validation to ensure it meets complexity requirements
-function validatePassword(password) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
-    return passwordRegex.test(password);
-}
-
 // Show profile if user is logged in
-function showProfile() {
+window.showProfile = function() {
     const username = localStorage.getItem("username");
     if (username) {
         document.getElementById("loginButton").style.display = "none";
@@ -154,7 +139,7 @@ function showProfile() {
 }
 
 // Logout and clear profile
-function logout() {
+window.logout = function() {
     localStorage.removeItem("username");
     document.getElementById("loginButton").style.display = "block";
     document.getElementById("profileInfo").style.display = "none";
