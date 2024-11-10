@@ -19,40 +19,68 @@ document.getElementById("currency").addEventListener("change", function() {
 
 // Run location fetch on load
 document.addEventListener("DOMContentLoaded", fetchLocation);
-
-document.getElementById("tripPlannerForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const startingLocation = document.getElementById("location").value;
-    const numDestinations = parseInt(document.getElementById("numDestinations").value);
-    const minDays = parseInt(document.getElementById("minDays").value);
-    const currency = document.getElementById("currency").value;  // Selected currency
-    const budget = parseInt(document.getElementById("budget").value);
-
-    const itinerary = generateItinerary(startingLocation, numDestinations, minDays, currency);
-    displayItinerary(itinerary);
+// Toggle between minimum days and number of destinations input fields
+document.getElementById("optionDays").addEventListener("change", function() {
+    if (this.checked) {
+        document.getElementById("daysContainer").style.display = "block";
+        document.getElementById("destinationsContainer").style.display = "none";
+    }
 });
 
-function generateItinerary(startingLocation, numDestinations, minDays, currency) {
-    const itinerary = [];
-    for (let i = 1; i <= numDestinations; i++) {
-        itinerary.push({
-            destination: `Destination ${i}`,  // Placeholder; replace with actual data
-            days: minDays,
-            currency: currency
-        });
+document.getElementById("optionDestinations").addEventListener("change", function() {
+    if (this.checked) {
+        document.getElementById("daysContainer").style.display = "none";
+        document.getElementById("destinationsContainer").style.display = "block";
     }
-    itinerary.push({ destination: startingLocation, days: 0, currency: currency }); // Return to starting location
-    return itinerary;
+});
+
+// Form submission handling
+document.getElementById("tripPlannerForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const startingLocation = document.getElementById("location").value;
+    const budget = parseInt(document.getElementById("budget").value);
+    const currency = document.getElementById("currency").value;
+    const transportation = document.getElementById("transportation").value;
+
+    let tripDetails;
+    if (document.getElementById("optionDays").checked) {
+        const minDays = parseInt(document.getElementById("minDays").value);
+        tripDetails = {
+            type: "days",
+            startingLocation,
+            minDays,
+            budget,
+            currency,
+            transportation
+        };
+    } else if (document.getElementById("optionDestinations").checked) {
+        const numDestinations = parseInt(document.getElementById("numDestinations").value);
+        tripDetails = {
+            type: "destinations",
+            startingLocation,
+            numDestinations,
+            budget,
+            currency,
+            transportation
+        };
+    }
+
+    // Display trip details or call a function to process them further
+    displayTripDetails(tripDetails);
+});
+
+function displayTripDetails(details) {
+    const outputContainer = document.createElement("div");
+    outputContainer.innerHTML = "<h2>Your Trip Details:</h2>";
+
+    for (const [key, value] of Object.entries(details)) {
+        const detailElement = document.createElement("p");
+        detailElement.textContent = `${key}: ${value}`;
+        outputContainer.appendChild(detailElement);
+    }
+
+    document.body.appendChild(outputContainer);
 }
 
-function displayItinerary(itinerary) {
-    const itineraryContainer = document.createElement("div");
-    itineraryContainer.innerHTML = "<h2>Your Itinerary:</h2>";
-    itinerary.forEach(stop => {
-        const stopElement = document.createElement("p");
-        stopElement.textContent = `Destination: ${stop.destination}, Days: ${stop.days}, Currency: ${stop.currency}`;
-        itineraryContainer.appendChild(stopElement);
-    });
-    document.body.appendChild(itineraryContainer);
-}
 

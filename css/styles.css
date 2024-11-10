@@ -39,13 +39,13 @@ header nav ul li {
 }
 
 header nav ul li a, header #loginButton {
-    color: white; /* White text for nav links */
+    color: white; /* Set nav links and login button text to white */
     text-decoration: none;
     font-weight: bold;
 }
 
 header nav ul li a:hover, header #loginButton:hover {
-    color: #FFA726; /* Orange on hover for contrast */
+    color: #FFA726; /* Orange color on hover for contrast */
 }
 
 .user-controls {

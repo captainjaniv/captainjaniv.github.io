@@ -38,13 +38,29 @@
                 <label for="location">Starting Location:</label>
                 <input type="text" id="location" name="location" placeholder="Enter starting location" required>
         
-                <label for="numDestinations">Number of Destinations:</label>
-                <input type="number" id="numDestinations" name="numDestinations" placeholder="e.g., 3" required>
+                <!-- Choice between minimum days or number of destinations -->
+                <p>Would you like to specify:</p>
+                <div>
+                    <label>
+                        <input type="radio" name="tripOption" value="days" id="optionDays" checked> Minimum Days per Destination
+                    </label>
+                    <label>
+                        <input type="radio" name="tripOption" value="destinations" id="optionDestinations"> Number of Destinations
+                    </label>
+                </div>
         
-                <label for="minDays">Minimum Days per Destination:</label>
-                <input type="number" id="minDays" name="minDays" placeholder="e.g., 2" required>
+                <!-- Minimum Days Field (default visible) -->
+                <div id="daysContainer">
+                    <label for="minDays">Minimum Days per Destination:</label>
+                    <input type="number" id="minDays" name="minDays" placeholder="e.g., 2">
+                </div>
         
-                <!-- New Preferred Currency Field -->
+                <!-- Number of Destinations Field (hidden by default) -->
+                <div id="destinationsContainer" style="display: none;">
+                    <label for="numDestinations">Number of Destinations:</label>
+                    <input type="number" id="numDestinations" name="numDestinations" placeholder="e.g., 3">
+                </div>
+        
                 <label for="currency">Preferred Currency:</label>
                 <select id="currency" name="currency" required>
                     <option value="USD" selected>USD ($)</option>
@@ -67,7 +83,8 @@
         
                 <button type="submit">Plan My Trip</button>
             </form>
-        </section>        
+        </section>
+           
     </main>
 
     <footer>
