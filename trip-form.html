@@ -74,14 +74,14 @@
                     <input type="number" id="budget" name="budget" placeholder="Enter amount" required>
                 </div>
         
-                <label for="transportation">Preferred Transportation:</label>
-                <select id="transportation" name="transportation" required>
-                    <option value="flight" selected>Flight</option>
-                    <option value="train">Train</option>
-                    <option value="bus">Bus</option>
-                    <option value="car">Rental Car</option>
-                    <option value="boat">Boat</option>
-                </select>
+                <label>Preferred Transportation:</label>
+                <div class="transportation-options">
+                    <label><input type="checkbox" name="transportation" value="flight" checked> Flight</label>
+                    <label><input type="checkbox" name="transportation" value="train"> Train</label>
+                    <label><input type="checkbox" name="transportation" value="bus"> Bus</label>
+                    <label><input type="checkbox" name="transportation" value="car"> Rental Car</label>
+                    <label><input type="checkbox" name="transportation" value="boat"> Boat</label>
+                </div>
         
                 <button type="submit">Plan My Trip</button>
             </form>

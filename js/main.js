@@ -32,6 +32,13 @@ document.getElementById("optionDestinations").addEventListener("change", functio
     }
 });
 
+// Toggle Profile dropdown on profile picture click
+document.getElementById("profilePic").addEventListener("click", function() {
+    const profileInfo = document.getElementById("profileInfo");
+    profileInfo.style.display = profileInfo.style.display === "none" ? "block" : "none";
+});
+
+
 // Form submission handling
 document.getElementById("tripPlannerForm").addEventListener("submit", function(event) {
     event.preventDefault();

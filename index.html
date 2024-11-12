@@ -13,7 +13,7 @@
 
 </head>
 <body>
-     <header>
+    <header>
         <div class="logo" onclick="window.location.href='index.html'">
             <img src="images/logo.png" alt="Explorely Logo" class="header-logo">
         </div>
@@ -27,18 +27,25 @@
                 <li><button id="loginButton" onclick="showLoginForm()">Login</button></li>
             </ul>
         </nav>
-        <div id="profileInfo" style="display: none;">
-            <p>Welcome, <span id="usernameDisplay"></span></p>
-            <button onclick="logout()">Logout</button>
+        
+        <!-- Profile Icon and Dropdown -->
+        <div id="profilePicContainer" style="display: none;"> <!-- Hidden until user logs in -->
+            <div id="profilePic"></div>
+            <div id="profileDropdown" class="dropdown-menu">
+                <a href="my-trips.html">My Trips</a>
+                <a href="preferences.html">My Preferences</a>
+                <button onclick="logout()">Logout</button>
+            </div>
         </div>
     </header>
-
+    
     <main>
         <section class="intro">
             <h1>Welcome to Explorely</h1>
             <p>Discover new adventures with every journey! Plan a trip without knowing the destination and let us surprise you.</p>
             <button onclick="window.location.href='trip-form.html'">Plan Your Trip</button>
         </section>
+        <div id="dynamic-sections"></div>
     </main>
 
     <footer>

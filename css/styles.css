@@ -20,6 +20,11 @@ header {
     padding: 0 20px;
 }
 
+.header-logo {
+    margin-right: auto; /* Align logo to the far left */
+    height: 70%;
+}
+
 /* Logo Styling */
 header .logo img {
     height: 70%; /* Logo height 70% of header */
@@ -54,13 +59,8 @@ header nav ul li a:hover, header #loginButton:hover {
 }
 
 #loginButton {
-    margin-left: auto; /* Aligns to the far right */
+    margin-left: auto;
     padding: 5px 10px;
-}
-
-.user-controls {
-    display: flex;
-    align-items: center;
 }
 
 #trip-form {
@@ -182,12 +182,6 @@ footer {
     gap: 10px;
 }
 
-.profile-option {
-    margin: 0 10px;
-    color: #FFA726;
-    text-decoration: none;
-}
-
 .destination {
     display: flex;
     align-items: center;
@@ -211,3 +205,48 @@ footer {
     flex-direction: row-reverse; /* Alternate layout for each section */
 }
 
+/* Profile icon container and dropdown */
+#profilePicContainer {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+#profilePic {
+    width: 40px;
+    height: 40px;
+    background-color: #6A1B9A;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5px;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 150px;
+    z-index: 1;
+}
+
+.dropdown-menu a, .dropdown-menu button {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    text-align: left;
+    background: none;
+    border: none;
+    width: 100%;
+}
+
+.dropdown-menu a:hover, .dropdown-menu button:hover {
+    background-color: #f5f5f5;
+}

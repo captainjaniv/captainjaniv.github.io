@@ -69,16 +69,22 @@ window.googleSignIn = function() {
 // Local Authentication Storage and Functions
 const localUsers = JSON.parse(localStorage.getItem("localUsers")) || [];
 
+// Local sign-up
 window.localSignUp = function(event) {
     event.preventDefault();
     const username = document.getElementById("signup-username").value;
     const password = document.getElementById("signup-password").value;
-    localUsers.push({ username, password });
-    localStorage.setItem("localUsers", JSON.stringify(localUsers));
-    alert("Sign-Up Successful!");
-    closeLoginForm();
+    
+    // Save user initials and ID
+    const initials = username.match(/[A-Z]/g).join("").substring(0, 2);
+    const idNumber = username.match(/\d+/g)[0];
+    const displayId = `${initials}-${idNumber}`;
+
+    localStorage.setItem("displayId", displayId);
+    // store user details in local storage...
 }
 
+// Local sign-in
 window.localSignIn = function(event) {
     event.preventDefault();
     const username = document.getElementById("signin-username").value;
@@ -96,23 +102,31 @@ window.localSignIn = function(event) {
     }
 }
 
-// Show Profile UI (replaces login button)
+// Show Profile with initials
 window.showProfile = function() {
-    const username = localStorage.getItem("username");
-    const profileImageUrl = localStorage.getItem("profileImageUrl");
+    const displayId = localStorage.getItem("displayId"); // Initials + ID format like "AC-546"
+    const profilePic = document.getElementById("profilePic");
+    profilePic.innerText = displayId;
 
-    if (username) {
-        document.getElementById("loginButton").style.display = "none";
-        const profileInfo = document.getElementById("profileInfo");
-        profileInfo.style.display = "flex";
-        profileInfo.innerHTML = `
-            <p>Welcome, <span id="usernameDisplay">${username}</span></p>
-            <a href="my-trips.html" class="profile-option">My Trips</a>
-            <button onclick="logout()">Logout</button>
-            <img src="${profileImageUrl}" alt="Profile Picture" style="border-radius: 50%; width: 40px; height: 40px;">
-        `;
-    }
+    // Hide the login button, show profile container
+    document.getElementById("loginButton").style.display = "none";
+    document.getElementById("profilePicContainer").style.display = "inline-block";
 }
+
+// Toggle dropdown menu on profile icon click
+document.getElementById("profilePicContainer").addEventListener("click", function() {
+    const dropdown = document.getElementById("profileDropdown");
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+});
+
+// Close dropdown when clicking outside
+document.addEventListener("click", function(event) {
+    const dropdown = document.getElementById("profileDropdown");
+    const profilePicContainer = document.getElementById("profilePicContainer");
+    if (!profilePicContainer.contains(event.target)) {
+        dropdown.style.display = "none";
+    }
+});
 
 // Show and Close Login Modal
 window.showLoginForm = function() {
