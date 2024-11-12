@@ -54,6 +54,26 @@ window.closeLoginForm = function() {
     }
 }
 
+// Show the Sign In form and hide Sign Up form
+window.showSignIn = function() {
+    const signInForm = document.getElementById("signInForm");
+    const signUpForm = document.getElementById("signUpForm");
+    if (signInForm && signUpForm) {
+        signInForm.style.display = "block";
+        signUpForm.style.display = "none";
+    }
+}
+
+// Show the Sign Up form and hide Sign In form
+window.showSignUp = function() {
+    const signInForm = document.getElementById("signInForm");
+    const signUpForm = document.getElementById("signUpForm");
+    if (signInForm && signUpForm) {
+        signInForm.style.display = "none";
+        signUpForm.style.display = "block";
+    }
+}
+
 // Google Sign-In
 window.googleSignIn = function() {
     signInWithPopup(auth, provider)
