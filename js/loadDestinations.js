@@ -4,27 +4,22 @@ const GEO_DB_HOST = "wft-geo-db.p.rapidapi.com"
 
 async function loadDestinations() {
     try {
-        // Send request to fetch cities data
-        const response = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=4", {
+        const response = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=10&minPopulation=50000", {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
                 "x-rapidapi-host": GEO_DB_HOST
             }
-        });        
+        });
 
-        // Check if the response is ok (status 200-299)
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+
         const cities = await response.json();
-        
-        // Ensure `data` exists and is iterable
-        if (!cities.data || !Array.isArray(cities.data)) {
-            throw new Error("Unexpected response format: 'data' is missing or not an array");
-        }
+
+        const overTouristedCities = ["Barcelona", "Venice", "Amsterdam", "Dubrovnik"];
+        const filteredCities = cities.data.filter(city => !overTouristedCities.includes(city.city));
 
         const container = document.querySelector("main");
         if (!container) {
@@ -32,16 +27,16 @@ async function loadDestinations() {
             return;
         }
 
-        // Process each city in the response
-        for (const city of cities.data) {
+        for (const city of filteredCities) {
             const imageUrl = await fetchUnsplashImage(city.city);
+            const description = await fetchCityDescription(city.city);
             const section = document.createElement("section");
             section.className = "destination";
             section.innerHTML = `
                 <img src="${imageUrl}" alt="${city.city}">
                 <div>
                     <h2>${city.city}</h2>
-                    <p>Discover ${city.city}, a hidden gem perfect for unique travel experiences.</p>
+                    <p>${description}</p>
                 </div>
             `;
             container.appendChild(section);
@@ -51,25 +46,29 @@ async function loadDestinations() {
     }
 }
 
-// Function to fetch a random image for a city from Unsplash
-async function fetchUnsplashImage(query) {
+async function fetchCityDescription(cityName) {
     try {
-        const response = await fetch(`https://api.unsplash.com/photos/random?query=${query}&client_id=${UNSPLASH_ACCESS_KEY}`);
-        const data = await response.json();
-        
-        if (data && data.urls && data.urls.small) {
-            return data.urls.small;
-        } else {
-            console.warn(`No image found for ${query}. Using default image.`);
-            return "https://via.placeholder.com/150"; // Placeholder image if no result found
+        const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(cityName)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        const data = await response.json();
+        return data.extract || "No description available.";
     } catch (error) {
-        console.error("Error fetching image:", error);
-        return "https://via.placeholder.com/150"; // Placeholder image if no image fetched.
-
+        console.error("Error fetching city description:", error);
+        return "No description available.";
     }
 }
 
+async function fetchUnsplashImage(query) {
+    try {
+        const response = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&client_id=${UNSPLASH_ACCESS_KEY}`);
+        const data = await response.json();
+        return data.urls.small || "images/default.jpg";
+    } catch (error) {
+        console.error("Error fetching image:", error);
+        return "images/default.jpg";
+    }
+}
 
-// Ensure loadDestinations runs after DOM is fully loaded
 document.addEventListener("DOMContentLoaded", loadDestinations);
