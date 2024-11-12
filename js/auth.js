@@ -85,26 +85,21 @@ window.googleSignIn = function() {
 // Local Authentication Storage and Functions
 const localUsers = JSON.parse(localStorage.getItem("localUsers")) || [];
 
-// Local sign-up
-window.signUpUser = function(event) { // Rename to `signUpUser`
+// Local sign-up with profile initials format
+window.signUpUser = function(event) {
     event.preventDefault();
     const username = document.getElementById("signup-username").value;
     const password = document.getElementById("signup-password").value;
-    
-    // Generate display ID for the profile icon
-    const initials = username.match(/[A-Z]/g).join("").substring(0, 2);
-    const idNumber = username.match(/\d+/g)[0];
-    const displayId = `${initials}-${idNumber}`;
 
+    // Extract initials from first two uppercase letters and the first digit
+    const initials = username.match(/[A-Z]/g)?.slice(0, 2).join("") || "";
+    const firstDigit = username.match(/\d/); // First digit only
+    const displayId = `${initials}${firstDigit ? firstDigit[0] : ""}`;
+
+    // Save displayId and other user info in localStorage
     localStorage.setItem("displayId", displayId);
-    
-    // Store user details in local storage
-    localUsers.push({ username, password });
-    localStorage.setItem("localUsers", JSON.stringify(localUsers));
-    
-    // Show profile icon or welcome message
-    showProfile();
-    closeLoginForm();
+    showProfile(); // Update UI to show profile icon
+    closeLoginForm(); // Close the login form after sign-up
 };
 
 // Local sign-in

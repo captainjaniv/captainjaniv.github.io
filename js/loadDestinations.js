@@ -1,5 +1,6 @@
 const GEO_DB_API_KEY = "5931b2bb47msh78700b432711641p187d55jsncc429db2ba40";  // Replace with your GeoDB API key
 const UNSPLASH_ACCESS_KEY = "tcJ3Enh1Hy6wLC1X3bziB0Rc2gZlKLPEHwy4YOPvGYQ";  // Replace with your Unsplash API key
+const GEO_DB_HOST = "wft-geo-db.p.rapidapi.com"
 
 async function loadDestinations() {
     try {
