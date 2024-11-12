@@ -36,6 +36,49 @@ header {
         width: 15vw; /* מגדיר קנה מידה גדול יותר על מסכים קטנים */
         max-width: 100px; /* הגבלת רוחב מקסימלי */
     }
+
+     /* הצגת סמל ההמבורגר במסכים קטנים */
+     #hamburger-icon {
+        display: block;
+    }
+
+    /* הסתרת תפריט הניווט במסכים קטנים */
+    #main-nav {
+        display: none;
+    }
+
+    /* הצגת התפריט במצב פתוח */
+    #main-nav.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 1000;
+    }
+
+    /* התאמה של תפריט פרופיל למסכים קטנים */
+    #profileDropdown {
+        position: static;
+        width: 100%;
+        padding: 5px 0;
+    }
+}
+
+/* סמל ההמבורגר: מוסתר במסכים גדולים */
+#hamburger-icon {
+    display: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* תפריט הניווט הרגיל */
+#main-nav {
+    display: flex;
+    align-items: center;
 }
 
 header nav {
