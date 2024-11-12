@@ -3,22 +3,34 @@ const UNSPLASH_ACCESS_KEY = "tcJ3Enh1Hy6wLC1X3bziB0Rc2gZlKLPEHwy4YOPvGYQ";  // R
 
 async function loadDestinations() {
     try {
-        // Fetch lesser-known destinations with updated criteria
+        // Send request to fetch cities data
         const response = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=4&types=ADM3", {
+            method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
-                "x-rapidapi-host": "wft-geo-db.p.rapidapi.com"
+                "x-rapidapi-host": GEO_DB_HOST
             }
         });
 
-        const cities = await response.json();
-        const container = document.querySelector("main");
+        // Check if the response is ok (status 200-299)
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
+        const cities = await response.json();
+        
+        // Ensure `data` exists and is iterable
+        if (!cities.data || !Array.isArray(cities.data)) {
+            throw new Error("Unexpected response format: 'data' is missing or not an array");
+        }
+
+        const container = document.querySelector("main");
         if (!container) {
             console.error("Main container not found");
             return;
         }
 
+        // Process each city in the response
         for (const city of cities.data) {
             const imageUrl = await fetchUnsplashImage(city.city);
             const section = document.createElement("section");
@@ -37,15 +49,18 @@ async function loadDestinations() {
     }
 }
 
+// Function to fetch a random image for a city from Unsplash
 async function fetchUnsplashImage(query) {
+    const UNSPLASH_ACCESS_KEY = "YOUR_UNSPLASH_ACCESS_KEY"; // Replace with your Unsplash API Key
     try {
         const response = await fetch(`https://api.unsplash.com/photos/random?query=${query}&client_id=${UNSPLASH_ACCESS_KEY}`);
         const data = await response.json();
         return data.urls.small;
     } catch (error) {
         console.error("Error fetching image:", error);
-        return "images/default.jpg";
+        return "images/default.jpg"; // Placeholder image if fetch fails
     }
 }
 
+// Ensure loadDestinations runs after DOM is fully loaded
 document.addEventListener("DOMContentLoaded", loadDestinations);
