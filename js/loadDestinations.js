@@ -4,7 +4,11 @@ const GEO_DB_HOST = "wft-geo-db.p.rapidapi.com"
 
 async function loadDestinations() {
     try {
-        const response = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=10&minPopulation=50000", {
+        // בחירת נקודת התחלה אקראית לתוצאות 
+        const randomOffset = Math.floor(Math.random() * 100); // למשל עד 100 תוצאות ראשונות
+
+        // שליחת בקשה ל-GeoDB API לשליפת ערים
+        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=6&offset=${randomOffset}`, {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
@@ -18,7 +22,7 @@ async function loadDestinations() {
 
         const cities = await response.json();
 
-        const overTouristedCities = ["Barcelona", "Venice", "Amsterdam", "Dubrovnik"];
+        const overTouristedCities = ["Barcelona", "Venice", "Amsterdam", "Dubrovnik", "Reykjavik", "Florence", "Bruges", "Santorini", "Kyoto", "Prague", "Lisbon", "Dublin", "Siem Reap", "Havana", "Phuket", "Cusco", "Bali", "Mykonos", "Cancun", "Bern", "Bergen", "Bratislava", "Brussels", "Anseong", "Kuta", "Paris", "Vienna", "Budapest", "Copenhagen", "Salzburg"];
         const filteredCities = cities.data.filter(city => !overTouristedCities.includes(city.city));
 
         const container = document.querySelector("main");
