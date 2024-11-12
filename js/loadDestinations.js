@@ -61,11 +61,12 @@ async function fetchUnsplashImage(query) {
             return data.urls.small;
         } else {
             console.warn(`No image found for ${query}. Using default image.`);
-            return "images/default.jpg"; // Placeholder image if no result found
+            return "https://via.placeholder.com/150"; // Placeholder image if no result found
         }
     } catch (error) {
         console.error("Error fetching image:", error);
-        return "https://via.placeholder.com/150"; // תמונה ממקור חיצוני כתחליף
+        return "https://via.placeholder.com/150"; // Placeholder image if no image fetched.
+
     }
 }
 

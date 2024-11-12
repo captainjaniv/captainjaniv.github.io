@@ -1,41 +1,45 @@
+// Fetch user's location
+async function fetchLocation() {
+    try {
+        const response = await fetch("https://ipwhois.app/json/");
+        const data = await response.json();
+        const locationInput = document.getElementById("location");
+        if (locationInput) {
+            locationInput.value = `${data.city}, ${data.country}`;
+        }
+    } catch (error) {
+        console.error("Location detection failed:", error);
+        if (locationInput) {
+            locationInput.placeholder = "Unable to detect location.";
+        }
+    }
+}
+
+async function loadCurrencies() {
+    try {
+        const response = await fetch("https://openexchangerates.org/api/currencies.json");
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        const data = await response.json();
+        const currencySelect = document.getElementById("currency");
+        
+        // Populate the dropdown with currencies
+        Object.entries(data).forEach(([currencyCode, currencyName]) => {
+            const option = document.createElement("option");
+            option.value = currencyCode;
+            option.textContent = `${currencyCode} - ${currencyName}`;
+            currencySelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error loading currencies:", error);
+    }
+}
+
 // Wait for the DOM to load before adding event listeners
 document.addEventListener("DOMContentLoaded", () => {
-
-    // Fetch user's location
-    async function fetchLocation() {
-        try {
-            const response = await fetch("https://ipwhois.app/json/");
-            const data = await response.json();
-            const locationInput = document.getElementById("location");
-            if (locationInput) {
-                locationInput.value = `${data.city}, ${data.country}`;
-            }
-        } catch (error) {
-            console.error("Location detection failed:", error);
-            if (locationInput) {
-                locationInput.placeholder = "Unable to detect location.";
-            }
-        }
-    }
-    fetchLocation(); // Call fetchLocation when DOM is ready
-
-    async function loadCurrencies() {
-        try {
-            const response = await fetch("https://open.er-api.com/v6/latest");
-            const data = await response.json();
-            const currencySelect = document.getElementById("currency");
     
-            // Populate the dropdown with currencies
-            Object.keys(data.rates).forEach(currency => {
-                const option = document.createElement("option");
-                option.value = currency;
-                option.textContent = currency;
-                currencySelect.appendChild(option);
-            });
-        } catch (error) {
-            console.error("Error loading currencies:", error);
-        }
-    }
+    fetchLocation(); // Call fetchLocation when DOM is ready
+    loadCurrencies();
 
     // Update currency symbol when currency is selected
     const currencySelect = document.getElementById("currency");
@@ -47,10 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             currencySymbol.textContent = currencySymbols[selectedCurrency] || "$";
         });
     }
-
-    document.addEventListener("DOMContentLoaded", loadCurrencies);
     
-
     // Toggle minimum days vs. number of destinations fields
     const optionDays = document.getElementById("optionDays");
     const optionDestinations = document.getElementById("optionDestinations");
