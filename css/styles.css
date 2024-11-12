@@ -20,14 +20,12 @@ header {
     padding: 0 20px;
 }
 
-.header-logo {
-    margin-right: auto; /* Align logo to the far left */
-}
-
 /* Logo Styling */
-header .logo img {
-    height: 70%; /* Logo height 70% of header */
-    cursor: pointer;
+.header-logo {
+    height: 50px; /* Set a fixed height for the logo */
+    width: auto; /* Automatically adjust the width to maintain aspect ratio */
+    margin-right: auto; /* Pushes it to the left */
+    cursor: pointer
 }
 
 header nav {
