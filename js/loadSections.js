@@ -13,41 +13,49 @@ async function fetchUnsplashImage(query) {
 
 (async function loadSections() {
     try {
-        // בקשה לנתוני החלקים מקובץ JSON בנתיב הראשי
+        // Fetch sections data from JSON file
         const response = await fetch('/sectionsData.json');
         const sectionsData = await response.json();
 
-        // איתור הקונטיינר הראשי להוספת החלקים הדינמיים
+        // Main container
         const container = document.getElementById('dynamic-sections');
         if (!container) {
             console.error("Container for dynamic sections not found!");
             return;
         }
 
-        // לולאה על כל חלק כדי לייצר ולהציג את התוכן
+        // Loop through each section
         for (const section of sectionsData) {
-            // יצירת אלמנט חדש עבור החלק
+            // Create section container
             const sectionElement = document.createElement('section');
             sectionElement.className = 'dynamic-section';
 
-            // שליפת תמונה מ-Unsplash על פי השאילתה
-            const imageUrl = await fetchUnsplashImage(section.query); // שימוש בפונקציה לשליפת תמונה
-            const imageElement = document.createElement('img');
-            imageElement.src = imageUrl;
-            imageElement.alt = section.title;
+            // Fetch image from Unsplash and create img element
+            const imageUrl = await fetchUnsplashImage(section.query);
+            const imageElement = document.createElement('div');
+            imageElement.className = 'section-image';
+            imageElement.style.backgroundImage = `url(${imageUrl})`;
 
-            // יצירת תוכן פנימי עבור החלק
-            sectionElement.innerHTML = `
+            // Create text overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'section-overlay';
+            overlay.innerHTML = `
                 <h2>${section.title}</h2>
                 <p>${section.description}</p>
                 <a href="${section.link}" class="section-button">Learn More</a>
             `;
 
-            // הוספת התמונה כאלמנט ראשון בתוך החלק
-            sectionElement.prepend(imageElement);
-
-            // הוספת החלק לקונטיינר הראשי
+            // Append overlay and image element to section container
+            imageElement.appendChild(overlay);
+            sectionElement.appendChild(imageElement);
+            
+            // Append the section to container
             container.appendChild(sectionElement);
+
+            // Add a horizontal line between sections
+            const hr = document.createElement('hr');
+            hr.className = 'section-divider';
+            container.appendChild(hr);
         }
     } catch (error) {
         console.error("Error loading sections:", error);

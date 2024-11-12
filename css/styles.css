@@ -2,7 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI Semilight', sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     color: #6A1B9A; /* Purple */
     background-color: #e6f0f5; /* Light blue-gray background */
     display: flex;
@@ -269,4 +269,63 @@ footer {
 
 .dropdown-menu a:hover, .dropdown-menu button:hover {
     background-color: #f5f5f5;
+}
+
+/* Dynamic section styling */
+.dynamic-section {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+/* Set minimum height and responsive height for the image section */
+.section-image {
+    width: 100%;
+    min-height: 300px; /* Height starts at 300px */
+    height: auto; /* Adapts to content */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Text overlay with flexible height */
+.section-overlay {
+    background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    min-height: 150px; /* Minimum text area */
+    height: auto; /* Responsive to content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.section-overlay h2, .section-overlay p, .section-overlay a {
+    margin: 10px 0;
+}
+
+.section-button {
+    background-color: #FFA726;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.section-button:hover {
+    background-color: #005580;
+}
+
+/* Divider between sections */
+.section-divider {
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+    margin: 20px 0;
 }

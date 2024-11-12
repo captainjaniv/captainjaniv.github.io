@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// Firebase configuration (replace with your Firebase project settings)
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyATDQLpR_-isRU7Vnqg50tsUI8bzGOGv2E",
     authDomain: "explorely-poc.firebaseapp.com",
@@ -54,19 +54,6 @@ window.closeLoginForm = function() {
     }
 }
 
-// Show Sign In and Sign Up Forms
-window.showSignIn = function() {
-    document.getElementById("signInForm").style.display = "flex";
-    document.getElementById("signUpForm").style.display = "none";
-    document.getElementById("modalTitle").textContent = "Sign In";
-}
-
-window.showSignUp = function() {
-    document.getElementById("signInForm").style.display = "none";
-    document.getElementById("signUpForm").style.display = "flex";
-    document.getElementById("modalTitle").textContent = "Sign Up";
-}
-
 // Google Sign-In
 window.googleSignIn = function() {
     signInWithPopup(auth, provider)
@@ -93,11 +80,13 @@ window.signUpUser = function(event) {
 
     // Extract initials from first two uppercase letters and the first digit
     const initials = username.match(/[A-Z]/g)?.slice(0, 2).join("") || "";
-    const firstDigit = username.match(/\d/); // First digit only
-    const displayId = `${initials}${firstDigit ? firstDigit[0] : ""}`;
+    const firstDigit = username.match(/\d/) ? username.match(/\d/)[0] : "0"; // Use 0 if no digit
+    const displayId = `${initials}${firstDigit}`;
 
     // Save displayId and other user info in localStorage
     localStorage.setItem("displayId", displayId);
+    localStorage.setItem("username", username);
+    localStorage.setItem("profileImageUrl", "images/default-profile.png"); // Placeholder image
     showProfile(); // Update UI to show profile icon
     closeLoginForm(); // Close the login form after sign-up
 };
@@ -112,7 +101,7 @@ window.signInUser = function(event) {
 
     if (userExists) {
         localStorage.setItem("username", username);
-        localStorage.setItem("profileImageUrl", "images/default-profile.png"); // Optional placeholder image
+        localStorage.setItem("profileImageUrl", "images/default-profile.png"); // Placeholder image
         showProfile();
         closeLoginForm();
     } else {
@@ -124,21 +113,33 @@ window.signInUser = function(event) {
 window.logout = function() {
     localStorage.removeItem("username");
     localStorage.removeItem("profileImageUrl");
+    localStorage.removeItem("displayId");
+
     document.getElementById("loginButton").style.display = "block";
-    document.getElementById("profileInfo").style.display = "none";
+    document.getElementById("profilePicContainer").style.display = "none";
+    document.getElementById("profilePic").innerText = ""; // Clear profile icon text
 }
 
 // Show profile with initials for local authentication
 window.showProfile = function() {
     const displayId = localStorage.getItem("displayId");
-    if (displayId) {
-        const profilePic = document.getElementById("profilePic");
-        profilePic.innerText = displayId;
+    const profileImageUrl = localStorage.getItem("profileImageUrl");
+    const profilePic = document.getElementById("profilePic");
+    const profilePicContainer = document.getElementById("profilePicContainer");
 
-        // Hide login button and show profile container
-        document.getElementById("loginButton").style.display = "none";
-        document.getElementById("profilePicContainer").style.display = "inline-block";
+    if (displayId) {
+        // Set profile circle with initials
+        profilePic.style.backgroundImage = "none";
+        profilePic.innerText = displayId;
+    } else if (profileImageUrl) {
+        // Set profile image for Google users
+        profilePic.style.backgroundImage = `url('${profileImageUrl}')`;
+        profilePic.innerText = "";
     }
+
+    // Hide login button and show profile container
+    document.getElementById("loginButton").style.display = "none";
+    profilePicContainer.style.display = "inline-block";
 }
 
 // Toggle profile dropdown on profile icon click
