@@ -1,6 +1,6 @@
 // Firebase Initialization
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 // Firebase configuration (replace with your Firebase project settings)
 const firebaseConfig = {
@@ -12,6 +12,15 @@ const firebaseConfig = {
     appId: "1:642209287692:web:2055c2b30f59e97456a829",
     measurementId: "G-FYBPH901SR"
 };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+// Helper function to capitalize the first letter of each word
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
 
 // Generate a unique username with two random words from an API + a 6-digit number
 window.generateUser = async function() {
@@ -29,38 +38,62 @@ window.generateUser = async function() {
     }
 }
 
-// Helper function to capitalize the first letter of each word
-function capitalize(word) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-// Show login form
-window.showLoginForm = function() {
-    document.getElementById("loginForm").style.display = "block";
-}
-
-// Close login form
-window.closeLoginForm = function() {
-    document.getElementById("loginForm").style.display = "none";
-}
-
-// Show Sign In Form
+// Show Sign In and Sign Up Forms
 window.showSignIn = function() {
     document.getElementById("signInForm").style.display = "flex";
     document.getElementById("signUpForm").style.display = "none";
     document.getElementById("modalTitle").textContent = "Sign In";
 }
 
-// Show Sign Up Form
 window.showSignUp = function() {
     document.getElementById("signInForm").style.display = "none";
     document.getElementById("signUpForm").style.display = "flex";
     document.getElementById("modalTitle").textContent = "Sign Up";
+}
+
+// Google Sign-In
+window.googleSignIn = function() {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            const user = result.user;
+            localStorage.setItem("username", user.displayName);
+            localStorage.setItem("profileImageUrl", user.photoURL || "images/default-profile.png");
+            showProfile();
+            closeLoginForm();
+        })
+        .catch((error) => {
+            console.error("Google Sign-In Failed:", error.message);
+        });
+}
+
+// Local Authentication Storage and Functions
+const localUsers = JSON.parse(localStorage.getItem("localUsers")) || [];
+
+window.localSignUp = function(event) {
+    event.preventDefault();
+    const username = document.getElementById("signup-username").value;
+    const password = document.getElementById("signup-password").value;
+    localUsers.push({ username, password });
+    localStorage.setItem("localUsers", JSON.stringify(localUsers));
+    alert("Sign-Up Successful!");
+    closeLoginForm();
+}
+
+window.localSignIn = function(event) {
+    event.preventDefault();
+    const username = document.getElementById("signin-username").value;
+    const password = document.getElementById("signin-password").value;
+
+    const userExists = localUsers.some(user => user.username === username && user.password === password);
+
+    if (userExists) {
+        localStorage.setItem("username", username);
+        localStorage.setItem("profileImageUrl", "images/default-profile.png"); // Optional placeholder image
+        showProfile();
+        closeLoginForm();
+    } else {
+        alert("Incorrect username or password.");
+    }
 }
 
 // Show Profile UI (replaces login button)
@@ -81,38 +114,13 @@ window.showProfile = function() {
     }
 }
 
-// Google Sign-In
-window.googleSignIn = function() {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            const user = result.user;
-            localStorage.setItem("username", user.displayName);
-            localStorage.setItem("profileImageUrl", user.photoURL || "images/default-profile.png");
-            showProfile();
-            closeLoginForm();
-        })
-        .catch((error) => {
-            console.error("Google Sign In Failed:", error.message);
-        });
+// Show and Close Login Modal
+window.showLoginForm = function() {
+    document.getElementById("loginForm").style.display = "block";
 }
 
-// Local Sign-In
-window.signInUser = function(event) {
-    event.preventDefault();
-    const username = document.getElementById("signin-username").value;
-    const email = `${username}@example.com`;
-    const password = document.getElementById("signin-password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            localStorage.setItem("username", username);
-            localStorage.setItem("profileImageUrl", "images/default-profile.png");  // Optional placeholder image
-            showProfile();
-            closeLoginForm();
-        })
-        .catch((error) => {
-            console.error("Sign In Failed:", error.message);
-        });
+window.closeLoginForm = function() {
+    document.getElementById("loginForm").style.display = "none";
 }
 
 // Logout and clear profile info
@@ -123,5 +131,5 @@ window.logout = function() {
     document.getElementById("profileInfo").style.display = "none";
 }
 
-// Check and display profile on page load
+// Display profile on page load if logged in
 document.addEventListener("DOMContentLoaded", showProfile);

@@ -14,28 +14,29 @@ body, html {
 /* Header Styling */
 header {
     background-color: #6A1B9A;
-    color: white;
-    height: 7vh; /* Header height is 7% of viewport height */
+    height: 7vh; /* 7% of the viewport height */
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    box-sizing: border-box;
 }
 
 /* Logo Styling */
 header .logo img {
-    height: 55%; /* 55% of the header’s height */
-    width: 5%;   /* 5% of the header’s width */
+    height: 70%; /* Logo height 70% of header */
     cursor: pointer;
+}
+
+header nav {
+    flex-grow: 1;
+    text-align: center;
 }
 
 /* Navbar Styling */
 header nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+    list-style: none;
     display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
 header nav ul li {
@@ -50,6 +51,11 @@ header nav ul li a, header #loginButton {
 
 header nav ul li a:hover, header #loginButton:hover {
     color: #FFA726; /* Orange color on hover for contrast */
+}
+
+#loginButton {
+    margin-left: auto; /* Aligns to the far right */
+    padding: 5px 10px;
 }
 
 .user-controls {
