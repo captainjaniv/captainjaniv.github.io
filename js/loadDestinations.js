@@ -56,12 +56,19 @@ async function fetchUnsplashImage(query) {
     try {
         const response = await fetch(`https://api.unsplash.com/photos/random?query=${query}&client_id=${UNSPLASH_ACCESS_KEY}`);
         const data = await response.json();
-        return data.urls.small;
+        
+        if (data && data.urls && data.urls.small) {
+            return data.urls.small;
+        } else {
+            console.warn(`No image found for ${query}. Using default image.`);
+            return "images/default.jpg"; // Placeholder image if no result found
+        }
     } catch (error) {
         console.error("Error fetching image:", error);
-        return "images/default.jpg"; // Placeholder image if fetch fails
+        return "https://via.placeholder.com/150"; // תמונה ממקור חיצוני כתחליף
     }
 }
+
 
 // Ensure loadDestinations runs after DOM is fully loaded
 document.addEventListener("DOMContentLoaded", loadDestinations);
