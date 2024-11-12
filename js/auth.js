@@ -38,6 +38,22 @@ window.generateUser = async function() {
     }
 }
 
+// Show the login form
+window.showLoginForm = function() {
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+        loginForm.style.display = "block";
+    }
+}
+
+// Close login form
+window.closeLoginForm = function() {
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+        loginForm.style.display = "none";
+    }
+}
+
 // Show Sign In and Sign Up Forms
 window.showSignIn = function() {
     document.getElementById("signInForm").style.display = "flex";
@@ -102,41 +118,6 @@ window.localSignIn = function(event) {
     }
 }
 
-// Show Profile with initials
-window.showProfile = function() {
-    const displayId = localStorage.getItem("displayId"); // Initials + ID format like "AC-546"
-    const profilePic = document.getElementById("profilePic");
-    profilePic.innerText = displayId;
-
-    // Hide the login button, show profile container
-    document.getElementById("loginButton").style.display = "none";
-    document.getElementById("profilePicContainer").style.display = "inline-block";
-}
-
-// Toggle dropdown menu on profile icon click
-document.getElementById("profilePicContainer").addEventListener("click", function() {
-    const dropdown = document.getElementById("profileDropdown");
-    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-});
-
-// Close dropdown when clicking outside
-document.addEventListener("click", function(event) {
-    const dropdown = document.getElementById("profileDropdown");
-    const profilePicContainer = document.getElementById("profilePicContainer");
-    if (!profilePicContainer.contains(event.target)) {
-        dropdown.style.display = "none";
-    }
-});
-
-// Show and Close Login Modal
-window.showLoginForm = function() {
-    document.getElementById("loginForm").style.display = "block";
-}
-
-window.closeLoginForm = function() {
-    document.getElementById("loginForm").style.display = "none";
-}
-
 // Logout and clear profile info
 window.logout = function() {
     localStorage.removeItem("username");
@@ -145,5 +126,38 @@ window.logout = function() {
     document.getElementById("profileInfo").style.display = "none";
 }
 
-// Display profile on page load if logged in
-document.addEventListener("DOMContentLoaded", showProfile);
+// Show profile with initials for local authentication
+window.showProfile = function() {
+    const displayId = localStorage.getItem("displayId");
+    if (displayId) {
+        const profilePic = document.getElementById("profilePic");
+        profilePic.innerText = displayId;
+
+        // Hide login button and show profile container
+        document.getElementById("loginButton").style.display = "none";
+        document.getElementById("profilePicContainer").style.display = "inline-block";
+    }
+}
+
+// Toggle profile dropdown on profile icon click
+document.addEventListener("DOMContentLoaded", () => {
+    showProfile(); // Display profile if logged in
+
+    const profilePic = document.getElementById("profilePic");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const profilePicContainer = document.getElementById("profilePicContainer");
+
+    if (profilePic) {
+        profilePic.addEventListener("click", () => {
+            profileDropdown.style.display = 
+                profileDropdown.style.display === "none" ? "block" : "none";
+        });
+    }
+
+    // Close dropdown when clicking outside the profile container
+    document.addEventListener("click", (event) => {
+        if (!profilePicContainer.contains(event.target)) {
+            profileDropdown.style.display = "none";
+        }
+    });
+});

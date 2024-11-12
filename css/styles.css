@@ -37,8 +37,11 @@ header nav {
 header nav ul {
     list-style: none;
     display: flex;
-    justify-content: center;
     gap: 15px;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 header nav ul li {
@@ -58,6 +61,10 @@ header nav ul li a:hover, header #loginButton:hover {
 #loginButton {
     margin-left: auto;
     padding: 5px 10px;
+    color: white;
+    background-color: #67FF90;
+    border: none;
+    cursor: pointer;
 }
 
 #trip-form {
@@ -216,34 +223,35 @@ footer {
 .destination:nth-child(even) {
     flex-direction: row-reverse; /* Alternate layout for each section */
 }
-
-/* Profile icon container and dropdown */
+/* Profile Icon and Dropdown */
 #profilePicContainer {
     position: relative;
     display: inline-block;
     cursor: pointer;
+    margin-left: auto; /* Aligns to the right */
 }
 
 #profilePic {
     width: 40px;
     height: 40px;
-    background-color: #6A1B9A;
+    background-color: #FFA726; /* Orange background for local authentication */
     color: white;
     font-weight: bold;
     text-align: center;
     line-height: 40px;
-    border-radius: 5px;
+    border-radius: 50%;
 }
 
+/* Dropdown Menu */
 .dropdown-menu {
     display: none;
     position: absolute;
     top: 45px;
     right: 0;
     background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
     border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 150px;
     z-index: 1;
 }
@@ -253,9 +261,9 @@ footer {
     padding: 10px;
     color: #333;
     text-decoration: none;
-    text-align: left;
     background: none;
     border: none;
+    text-align: left;
     width: 100%;
 }
 
