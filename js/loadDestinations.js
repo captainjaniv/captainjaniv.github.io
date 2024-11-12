@@ -1,5 +1,5 @@
-const GEO_DB_API_KEY = "5931b2bb47msh78700b432711641p187d55jsncc429db2ba40";  // Replace with your GeoDB API key
-const UNSPLASH_ACCESS_KEY = "tcJ3Enh1Hy6wLC1X3bziB0Rc2gZlKLPEHwy4YOPvGYQ";  // Replace with your Unsplash API key
+const GEO_DB_API_KEY = "5931b2bb47msh78700b432711641p187d55jsncc429db2ba40";
+const UNSPLASH_ACCESS_KEY = "tcJ3Enh1Hy6wLC1X3bziB0Rc2gZlKLPEHwy4YOPvGYQ";
 const GEO_DB_HOST = "wft-geo-db.p.rapidapi.com"
 
 async function loadDestinations() {
@@ -11,13 +11,14 @@ async function loadDestinations() {
                 "x-rapidapi-key": GEO_DB_API_KEY,
                 "x-rapidapi-host": GEO_DB_HOST
             }
-        });
+        });        
 
         // Check if the response is ok (status 200-299)
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
         }
-
+        
         const cities = await response.json();
         
         // Ensure `data` exists and is iterable
@@ -52,7 +53,6 @@ async function loadDestinations() {
 
 // Function to fetch a random image for a city from Unsplash
 async function fetchUnsplashImage(query) {
-    const UNSPLASH_ACCESS_KEY = "YOUR_UNSPLASH_ACCESS_KEY"; // Replace with your Unsplash API Key
     try {
         const response = await fetch(`https://api.unsplash.com/photos/random?query=${query}&client_id=${UNSPLASH_ACCESS_KEY}`);
         const data = await response.json();
