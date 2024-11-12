@@ -19,6 +19,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     fetchLocation(); // Call fetchLocation when DOM is ready
 
+    async function loadCurrencies() {
+        try {
+            const response = await fetch("https://open.er-api.com/v6/latest");
+            const data = await response.json();
+            const currencySelect = document.getElementById("currency");
+    
+            // Populate the dropdown with currencies
+            Object.keys(data.rates).forEach(currency => {
+                const option = document.createElement("option");
+                option.value = currency;
+                option.textContent = currency;
+                currencySelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error loading currencies:", error);
+        }
+    }
+
     // Update currency symbol when currency is selected
     const currencySelect = document.getElementById("currency");
     const currencySymbol = document.getElementById("currencySymbol");
@@ -29,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
             currencySymbol.textContent = currencySymbols[selectedCurrency] || "$";
         });
     }
+
+    document.addEventListener("DOMContentLoaded", loadCurrencies);
+    
 
     // Toggle minimum days vs. number of destinations fields
     const optionDays = document.getElementById("optionDays");

@@ -5,7 +5,7 @@ const GEO_DB_HOST = "wft-geo-db.p.rapidapi.com"
 async function loadDestinations() {
     try {
         // Send request to fetch cities data
-        const response = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=4&types=ADM3", {
+        const response = await fetch("https://wft-geo-db.p.rapidapi.com/v1/geo/cities?limit=4", {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
