@@ -155,6 +155,10 @@ footer {
     width: 100%;
 }
 
+footer p {
+    color:#FFA726
+}
+
 /* Modal Styling */
 .modal {
     position: fixed;
@@ -308,6 +312,7 @@ footer {
 
 .section-overlay h2, .section-overlay p, .section-overlay a {
     margin: 10px 0;
+    color:#b0c4de
 }
 
 .section-button {
