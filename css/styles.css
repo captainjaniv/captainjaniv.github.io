@@ -2,7 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI Semilight', sans-serif;
     color: #6A1B9A; /* Purple */
     background-color: #e6f0f5; /* Light blue-gray background */
     display: flex;
@@ -17,15 +17,25 @@ header {
     height: 7vh; /* 7% of the viewport height */
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box; /* כדי להימנע מחריגה מרוחב המסך */
 }
 
 /* Logo Styling */
 .header-logo {
-    max-height: 40px; /* Set a fixed height for the logo */
-    width: auto; /* Automatically adjust the width to maintain aspect ratio */
-    margin-right: auto; /* Pushes it to the left */
+    width: 10vw; /* קנה מידה של רוחב חלון הצפייה - 10% מרוחב המסך */
+    max-width: 150px; /* הגבלה לגודל מקסימלי כך שלא יהיה גדול מדי על מסכים גדולים */
+    height: auto; /* שמירה על פרופורציות */
     cursor: pointer
+}
+
+@media (max-width: 768px) {
+    .header-logo {
+        width: 15vw; /* מגדיר קנה מידה גדול יותר על מסכים קטנים */
+        max-width: 100px; /* הגבלת רוחב מקסימלי */
+    }
 }
 
 header nav {
