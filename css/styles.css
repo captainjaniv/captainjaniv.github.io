@@ -326,6 +326,7 @@ footer p {
     border: none;
     text-align: left;
     width: 100%;
+    margin-top: 0;
 }
 
 .dropdown-menu a:hover, .dropdown-menu button:hover {

@@ -254,23 +254,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const itineraryContainer = document.createElement("div");
     document.body.appendChild(itineraryContainer);
 
+    // חיבור ל-updateTripOptionField עבור שינוי placeholder לפי tripOption
+    const tripOptionElement = document.getElementById("tripOption");
+    if (tripOptionElement) {
+        tripOptionElement.addEventListener("change", updateTripOptionField);
+    }
+
     if (tripPlannerForm) {
         tripPlannerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
+
+            // קריאת ערכי השדות מהטופס
             const startingLocation = document.getElementById("location").value;
             const departureDate = new Date(document.getElementById("start-date").value);
             const endDate = new Date(document.getElementById("end-date").value);
             const budget = parseFloat(document.getElementById("budget").value);
             const transportOptions = Array.from(document.querySelectorAll("input[name='transportation']:checked")).map(el => el.value);
-            const tripOptionElement = document.getElementById("tripOption");
-            if (tripOptionElement) {
-                tripOptionElement.addEventListener("change", updateTripOptionField);
-            }
-            
-            const tripOption = document.querySelector("input[name='tripOption']:checked").value;
-            const daysPerDestination = tripOption === "days" ? parseInt(document.getElementById("minDays").value) : null;
-            const destinationsCount = tripOption === "destinations" ? parseInt(document.getElementById("numDestinations").value) : null;
 
+            // קבלת ערכי tripOption ו-input של tripOptionInput
+            const tripOption = tripOptionElement.value; // "days" או "destinations"
+            const tripOptionValue = parseInt(document.getElementById("tripOptionInput").value); // הערך המספרי בשדה
+
+            // הגדרת daysPerDestination ו-destinationsCount לפי הבחירה ב-tripOption
+            const daysPerDestination = tripOption === "days" ? tripOptionValue : null;
+            const destinationsCount = tripOption === "destinations" ? tripOptionValue : null;
+
+            // קריאה ליצירת המסלול והצגתו
             const itinerary = await createItinerary({
                 startingLocation, departureDate, endDate, budget, transportOptions, daysPerDestination, destinationsCount
             });
