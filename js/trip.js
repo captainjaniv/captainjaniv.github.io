@@ -48,7 +48,7 @@ async function loadCurrencies() {
     }
 }
 
-// פונקציה לקבלת קורדינטות של עיר
+// פונקציה לקבלת קורדינטות של עיר עם Debug נוסף
 async function getCoordinates(city) {
     try {
         const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${encodeURIComponent(city)}&limit=1`, {
@@ -59,18 +59,21 @@ async function getCoordinates(city) {
             }
         });
         const data = await response.json();
+        console.log(`Debug getCoordinates: Response data for city ${city}`, data);
+
         if (data && data.data && data.data.length > 0) {
             const cityData = data.data[0];
             return { lat: cityData.latitude, lon: cityData.longitude };
         } else {
-            console.error("City not found");
+            console.error(`City not found: ${city}`);
             return null;
         }
     } catch (error) {
-        console.error("Error fetching coordinates:", error);
+        console.error(`Error fetching coordinates for city ${city}:`, error);
         return null;
     }
 }
+
 
 // פונקציה לחישוב עלות נסיעה בין שתי ערים על ידי בקשת API ל-GeoDB
 async function calculateCost(from, to, transport) {
@@ -132,21 +135,30 @@ async function selectNextCity(currentCity) {
 
 
 // פונקציה ליצירת מסלול טיול
-async function createItinerary({ startingLocation, departureDate, endDate, budget, transportOptions, daysPerDestination, destinationsCount }) {
+async function createItinerary({ startingLocation, departureDate, endDate, budget, transportOptions }) {
     const itinerary = [];
     let currentLocation = startingLocation;
     let currentDate = new Date(departureDate);
-    const totalDays = Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24));
-    const numDestinations = destinationsCount || Math.floor(totalDays / daysPerDestination);
-    const dayInterval = daysPerDestination || Math.floor(totalDays / numDestinations);
+    const totalDays = Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24)); // סה"כ מספר הימים
+
+    // קבלת הערך משדה ה-input והגדרת ערכי numDestinations או dayInterval בהתאם ל-tripOption
+    const tripOption = document.getElementById("tripOption").value; // ערך ה-select
+    const tripOptionValue = parseInt(document.getElementById("tripOptionInput").value); // הערך בשדה input
+    
+    // חישוב של מספר היעדים או מספר הימים בכל יעד בהתאם לאפשרות שנבחרה
+    const numDestinations = tripOption === "destinations" ? tripOptionValue : Math.floor(totalDays / tripOptionValue);
+    const dayInterval = tripOption === "days" ? tripOptionValue : Math.floor(totalDays / numDestinations);
     let remainingBudget = budget;
 
+    console.log(`Debug: Trip option ${tripOption} with value ${tripOptionValue}, numDestinations: ${numDestinations}, dayInterval: ${dayInterval}`);
+
+    // יצירת ה-itinerary לפי חישוב התקציב, זמינות היעדים ומשך הטיול
     for (let i = 0; i < numDestinations && remainingBudget > 0; i++) {
-        const nextCity = await selectNextCity(currentLocation);
+        const nextCity = await selectNextCity(currentLocation); // בוחר עיר הבאה
         if (!nextCity) break;
 
-        const feasibleTransports = transportOptions.filter(transport => {
-            const cost = calculateCost(currentLocation, nextCity, transport);
+        const feasibleTransports = transportOptions.filter(async transport => {
+            const cost = await calculateCost(currentLocation, nextCity, transport);
             return cost !== null && remainingBudget >= cost;
         });
 
@@ -157,6 +169,7 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
 
         const transport = feasibleTransports[0];
         const transportCost = await calculateCost(currentLocation, nextCity, transport);
+        remainingBudget -= transportCost;
 
         itinerary.push({
             from: currentLocation,
@@ -169,9 +182,9 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
 
         currentLocation = nextCity;
         currentDate.setDate(currentDate.getDate() + dayInterval);
-        remainingBudget -= transportCost;
     }
 
+    // הוספת החזרה לנקודת ההתחלה אם התקציב מאפשר זאת
     if (currentLocation !== startingLocation && remainingBudget > await calculateCost(currentLocation, startingLocation, transportOptions[0])) {
         itinerary.push({
             from: currentLocation,
@@ -189,11 +202,16 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
 }
 
 async function fetchActivities(city) {
-    // דוגמה כללית לפנייה ל-API להמלצות פעילות, יש להחליף את המידע לפי ה-API שלך
     try {
-        const response = await fetch(`https://example-activity-api.com/activities?city=${encodeURIComponent(city)}`);
+        const response = await fetch(`https://travel-advisor16.p.rapidapi.com/activities/list?location=${encodeURIComponent(city)}`, {
+            method: "GET",
+            headers: {
+                "x-rapidapi-key": GEO_DB_API_KEY,
+                "x-rapidapi-host": "travel-advisor16.p.rapidapi.com"
+            }
+        });
         const data = await response.json();
-        return data.activities || ["No activities found for this city"];
+        return data.data.map(activity => activity.name) || ["No activities found for this city"];
     } catch (error) {
         console.error("Error fetching activities:", error);
         return ["No activities found"];

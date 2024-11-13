@@ -69,18 +69,13 @@
                     </label>
                 </div>
         
-                <!-- Minimum Days Field (default visible) -->
-                <div id="daysContainer">
-                    <label for="minDays">Minimum Days per Destination:</label>
-                    <input type="number" id="minDays" name="minDays" placeholder="e.g., 2">
-                </div>
-        
-                <!-- Number of Destinations Field (hidden by default) -->
-                <div id="destinationsContainer" style="display: none;">
-                    <label for="numDestinations">Number of Destinations:</label>
-                    <input type="number" id="numDestinations" name="numDestinations" placeholder="e.g., 3">
-                </div>
-        
+                <label for="tripOption">Trip Option:</label>
+                <select id="tripOption" name="tripOption" onchange="updateTripOptionField()">
+                    <option value="days">Minimum Days per Destination</option>
+                    <option value="destinations">Number of Destinations</option>
+                </select>
+                <input type="number" id="tripOptionInput" name="tripOptionInput" placeholder="e.g., 2">
+
                 <label for="currency">Preferred Currency:</label>
                 <select id="currency" name="currency" required></select>
         
