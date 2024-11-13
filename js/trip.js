@@ -101,26 +101,27 @@ async function calculateCost(from, to, transport) {
     }
 }
 
-// פונקציה לבחירת עיר יעד חדשה (רנדומלית)
+// פונקציה לבחירת עיר יעד חדשה (רנדומלית) על פי קריטריונים נוספים
 async function selectNextCity(currentCity) {
     try {
         const currentCoords = await getCoordinates(currentCity);
         if (!currentCoords) return null;
-        
-        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/locations/${currentCoords.lat}${currentCoords.lon}/nearbyCities?radius=300&limit=10&sort=countryCode&minPopulation=50000`, {
+
+        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/locations/${currentCoords.lat}${currentCoords.lon}/nearbyCities?radius=20&limit=10&minPopulation=1000&sort=population`, {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
                 "x-rapidapi-host": GEO_DB_HOST
             }
         });
-        
+
         const data = await response.json();
         if (data && data.data && data.data.length > 0) {
-            const randomCity = data.data[Math.floor(Math.random() * data.data.length)];
-            return randomCity.city;
+            // סינון התוצאות כדי לכלול רק ערים שיש להן מקומות לינה קרובים (נניח 20 ק"מ)
+            const cityWithLodging = data.data.find(city => city.distance < 20);
+            return cityWithLodging ? cityWithLodging.city : null;
         } else {
-            console.error("No nearby cities found");
+            console.error("No suitable nearby cities found");
             return null;
         }
     } catch (error) {
@@ -128,6 +129,7 @@ async function selectNextCity(currentCity) {
         return null;
     }
 }
+
 
 // פונקציה ליצירת מסלול טיול
 async function createItinerary({ startingLocation, departureDate, endDate, budget, transportOptions, daysPerDestination, destinationsCount }) {
@@ -186,13 +188,32 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
     return itinerary;
 }
 
-// פונקציה להצגת המסלול שנבחר
-function displayItinerary(itinerary, container) {
+async function fetchActivities(city) {
+    // דוגמה כללית לפנייה ל-API להמלצות פעילות, יש להחליף את המידע לפי ה-API שלך
+    try {
+        const response = await fetch(`https://example-activity-api.com/activities?city=${encodeURIComponent(city)}`);
+        const data = await response.json();
+        return data.activities || ["No activities found for this city"];
+    } catch (error) {
+        console.error("Error fetching activities:", error);
+        return ["No activities found"];
+    }
+}
+
+// עדכון displayItinerary להצגת פעילויות ביעדים
+async function displayItinerary(itinerary, container) {
     container.innerHTML = "<h2>Your Itinerary:</h2>";
-    itinerary.forEach((leg, index) => {
-        const legInfo = `<p>Day ${index + 1}: From ${leg.from} to ${leg.to} on ${leg.date} by ${leg.transport} - Cost: ${leg.cost.toFixed(2)}$</p>`;
+    for (const [index, leg] of itinerary.entries()) {
+        const activities = await fetchActivities(leg.to); // שליפת פעילויות ליעד הנוכחי
+        const activityList = activities.map(activity => `<li>${activity}</li>`).join("");
+
+        const legInfo = `
+            <p>Day ${index + 1}: From ${leg.from} to ${leg.to} on ${leg.date} by ${leg.transport} - Cost: ${leg.cost.toFixed(2)}$</p>
+            <ul>Activities:
+                ${activityList}
+            </ul>`;
         container.innerHTML += legInfo;
-    });
+    }
 }
 
 // מאזין שמפעיל את הפונקציות בעמוד תכנון הטיול

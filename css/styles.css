@@ -151,6 +151,10 @@ p {
     color: black;
 }
 
+.intro p {
+    padding: 0 5px;
+}
+
 input[type="number"],
 input[type="text"],
 input[type="password"],
@@ -332,7 +336,7 @@ footer p {
 .dynamic-section {
     position: relative;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 /* Set minimum height and responsive height for the image section */
@@ -385,5 +389,5 @@ footer p {
     border: none;
     height: 1px;
     background-color: #ddd;
-    margin: 20px 0;
+    margin: 5px 0;
 }
