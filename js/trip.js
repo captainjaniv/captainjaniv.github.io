@@ -11,6 +11,17 @@ const transportPrices = {
     car: 0.04
 };
 
+function updateTripOptionField() {
+    const tripOption = document.getElementById("tripOption").value;
+    const tripOptionInput = document.getElementById("tripOptionInput");
+
+    if (tripOption === "days") {
+        tripOptionInput.placeholder = "e.g., 2";
+    } else {
+        tripOptionInput.placeholder = "e.g., 3";
+    }
+}
+
 // פונקציה לאיתור מיקום המשתמש והגדרת מיקום התחלתי בטופס
 async function fetchLocation() {
     try {
@@ -251,7 +262,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const endDate = new Date(document.getElementById("end-date").value);
             const budget = parseFloat(document.getElementById("budget").value);
             const transportOptions = Array.from(document.querySelectorAll("input[name='transportation']:checked")).map(el => el.value);
-
+            const tripOptionElement = document.getElementById("tripOption");
+            if (tripOptionElement) {
+                tripOptionElement.addEventListener("change", updateTripOptionField);
+            }
+            
             const tripOption = document.querySelector("input[name='tripOption']:checked").value;
             const daysPerDestination = tripOption === "days" ? parseInt(document.getElementById("minDays").value) : null;
             const destinationsCount = tripOption === "destinations" ? parseInt(document.getElementById("numDestinations").value) : null;
