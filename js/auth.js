@@ -22,6 +22,16 @@ function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
+// פונקציה לבדוק אם המשתמש מחובר על פי displayId או תמונת הפרופיל
+function checkUserLoggedIn() {
+    // בדיקה אם יש displayId ב-localStorage או אם יש תמונת פרופיל
+    const displayId = localStorage.getItem("displayId");
+    const profilePicContainer = document.getElementById("profilePicContainer");
+
+    // אם יש displayId או אם תמונת הפרופיל מוצגת, נניח שהמשתמש מחובר
+    return displayId || (profilePicContainer && profilePicContainer.style.display === "inline-block");
+}
+
 // Generate a unique username with two random words from an API + a 6-digit number
 window.generateUser = async function() {
     try {
@@ -175,6 +185,12 @@ document.addEventListener("DOMContentLoaded", () => {
             profileDropdown.style.display = 
                 profileDropdown.style.display === "none" ? "block" : "none";
         });
+    }
+
+    if (checkUserLoggedIn()) {
+        showProfile();
+    } else {
+        document.getElementById("loginButton").style.display = "block";
     }
 
     // Close dropdown when clicking outside the profile container
