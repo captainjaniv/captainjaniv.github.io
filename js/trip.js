@@ -62,29 +62,35 @@ async function loadCurrencies() {
 // פונקציה לקבלת קורדינטות של עיר עם Debug נוסף
 async function getCoordinates(city) {
     try {
-        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${encodeURIComponent(city)}&limit=1`, {
+        // מפריד את שם העיר מהמדינה
+        let cityName = city.split(",")[0].trim();
+        
+        // מסיר טקסט מיותר אם יש מקף בשם העיר
+        if (cityName.includes("-")) {
+            cityName = cityName.split("-")[0].trim();
+        }
+
+        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${encodeURIComponent(cityName)}&limit=1`, {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
                 "x-rapidapi-host": GEO_DB_HOST
             }
         });
-        const data = await response.json();
-        console.log(`Debug getCoordinates: Response data for city ${city}`, data);
 
+        const data = await response.json();
         if (data && data.data && data.data.length > 0) {
             const cityData = data.data[0];
             return { lat: cityData.latitude, lon: cityData.longitude };
         } else {
-            console.error(`City not found: ${city}`);
+            console.error(`City not found: ${cityName}`);
             return null;
         }
     } catch (error) {
-        console.error(`Error fetching coordinates for city ${city}:`, error);
+        console.error("Error fetching coordinates:", error);
         return null;
     }
 }
-
 
 // פונקציה לחישוב עלות נסיעה בין שתי ערים על ידי בקשת API ל-GeoDB
 async function calculateCost(from, to, transport) {
