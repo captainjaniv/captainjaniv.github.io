@@ -254,37 +254,45 @@ document.addEventListener("DOMContentLoaded", () => {
     const itineraryContainer = document.createElement("div");
     document.body.appendChild(itineraryContainer);
 
-    // חיבור ל-updateTripOptionField עבור שינוי placeholder לפי tripOption
+    // עדכון placeholder בעת שינוי ב-tripOption
     const tripOptionElement = document.getElementById("tripOption");
     if (tripOptionElement) {
         tripOptionElement.addEventListener("change", updateTripOptionField);
+    } else {
+        console.error("tripOption element not found");
     }
 
     if (tripPlannerForm) {
         tripPlannerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            // קריאת ערכי השדות מהטופס
-            const startingLocation = document.getElementById("location").value;
-            const departureDate = new Date(document.getElementById("start-date").value);
-            const endDate = new Date(document.getElementById("end-date").value);
-            const budget = parseFloat(document.getElementById("budget").value);
+            // בדיקה עבור כל אלמנט לפני גישה ל-value
+            const startingLocation = document.getElementById("location")?.value || "";
+            const departureDate = document.getElementById("start-date") ? new Date(document.getElementById("start-date").value) : null;
+            const endDate = document.getElementById("end-date") ? new Date(document.getElementById("end-date").value) : null;
+            const budget = parseFloat(document.getElementById("budget")?.value || 0);
             const transportOptions = Array.from(document.querySelectorAll("input[name='transportation']:checked")).map(el => el.value);
 
-            // קבלת ערכי tripOption ו-input של tripOptionInput
-            const tripOption = tripOptionElement.value; // "days" או "destinations"
-            const tripOptionValue = parseInt(document.getElementById("tripOptionInput").value); // הערך המספרי בשדה
+            if (!tripOptionElement) {
+                console.error("tripOption element is missing");
+                return;
+            }
 
-            // הגדרת daysPerDestination ו-destinationsCount לפי הבחירה ב-tripOption
+            const tripOption = tripOptionElement.value;
+            const tripOptionInputElement = document.getElementById("tripOptionInput");
+            const tripOptionValue = tripOptionInputElement ? parseInt(tripOptionInputElement.value) : 0;
+
             const daysPerDestination = tripOption === "days" ? tripOptionValue : null;
             const destinationsCount = tripOption === "destinations" ? tripOptionValue : null;
 
-            // קריאה ליצירת המסלול והצגתו
             const itinerary = await createItinerary({
                 startingLocation, departureDate, endDate, budget, transportOptions, daysPerDestination, destinationsCount
             });
 
             displayItinerary(itinerary, itineraryContainer);
         });
+    } else {
+        console.error("tripPlannerForm element not found");
     }
 });
+
