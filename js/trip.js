@@ -132,8 +132,8 @@ async function selectNextCity(currentCity) {
         const currentCoords = await getCoordinates(currentCity);
         if (!currentCoords) return null;
 
-        const coordinates = `${currentCoords.lat},${currentCoords.lon}`;
-        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/locations/${coordinates}/nearbyCities?radius=20&limit=10&minPopulation=1000&sort=population`, {
+        const coordinates = `${currentCoords.lat}-${currentCoords.lon}`;
+        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/locations/${coordinates}/nearbyCities?radius=20&limit=10&minPopulation=1000&sort=population&distanceUnit=KM`, {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
