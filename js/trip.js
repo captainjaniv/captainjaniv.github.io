@@ -59,17 +59,17 @@ async function loadCurrencies() {
     }
 }
 
-// פונקציה לקבלת קורדינטות של עיר עם Debug נוסף
+const cache = {};
+
 async function getCoordinates(city) {
+    if (cache[city]) return cache[city]; // חזרה מתוצאות שמורות אם קיימות
+
     try {
-        // מפריד את שם העיר מהמדינה
         let cityName = city.split(",")[0].trim();
-        
-        // מסיר טקסט מיותר אם יש מקף בשם העיר
         if (cityName.includes("-")) {
             cityName = cityName.split("-")[0].trim();
         }
-
+        
         const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${encodeURIComponent(cityName)}&limit=1`, {
             method: "GET",
             headers: {
@@ -81,7 +81,8 @@ async function getCoordinates(city) {
         const data = await response.json();
         if (data && data.data && data.data.length > 0) {
             const cityData = data.data[0];
-            return { lat: cityData.latitude, lon: cityData.longitude };
+            cache[city] = { lat: cityData.latitude, lon: cityData.longitude }; // שמירת התוצאה במטמון
+            return cache[city];
         } else {
             console.error(`City not found: ${cityName}`);
             return null;
