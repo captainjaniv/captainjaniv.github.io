@@ -114,10 +114,25 @@ async function selectNextCity(currentCity) {
         const currentCoords = await getCoordinates(currentCity);
         if (!currentCoords) return null;
 
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentCoords.lat}&lon=${currentCoords.lon}&format=json&zoom=10&addressdetails=1`);
+        const coordinates = `${currentCoords.lat},${currentCoords.lon}`;
+        const radius = 50000; // להגדיר רדיוס רחב יותר כדי להבטיח גיוון בערים
+        const response = await fetch(`https://overpass-api.de/api/interpreter?data=[out:json];node(around:${radius},${coordinates})["place"="city"]["population"];out;`);
+
         const data = await response.json();
 
-        return data?.address?.city || null;
+        // מציאת עיר שונה מהעיר הנוכחית עם אוכלוסייה גדולה מ-1000
+        const cities = data.elements.filter(city => city.tags && city.tags.name && city.tags.name !== currentCity);
+
+        if (cities.length === 0) {
+            console.warn("No suitable nearby cities found");
+            return null;
+        }
+
+        // בחירת עיר אקראית מהרשימה
+        const nextCity = cities[Math.floor(Math.random() * cities.length)].tags.name;
+        console.log(`Selected next city: ${nextCity}`);
+        return nextCity;
+
     } catch (error) {
         console.error("Error selecting next city:", error);
         return null;
@@ -129,33 +144,37 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
     let currentLocation = startingLocation;
     let currentDate = new Date(departureDate);
     const totalDays = Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24));
-
     const tripOption = document.getElementById("tripOption").value;
     const tripOptionValue = parseInt(document.getElementById("tripOptionInput").value);
-
     const numDestinations = tripOption === "destinations" ? tripOptionValue : Math.floor(totalDays / tripOptionValue);
     const dayInterval = tripOption === "days" ? tripOptionValue : Math.floor(totalDays / numDestinations);
     let remainingBudget = budget;
 
-    console.log(`Debug: Trip option ${tripOption} with value ${tripOptionValue}, numDestinations: ${numDestinations}, dayInterval: ${dayInterval}`);
+    console.log(`Debug: Starting location: ${currentLocation}, Total days: ${totalDays}, Budget: ${remainingBudget}`);
 
     for (let i = 0; i < numDestinations && remainingBudget > 0; i++) {
         const nextCity = await selectNextCity(currentLocation);
-        if (!nextCity) break;
+        if (!nextCity || nextCity === currentLocation) {
+            console.warn(`Failed to find a new city different from ${currentLocation}`);
+            break;
+        }
 
-        const feasibleTransports = transportOptions.filter(async transport => {
+        // בדיקת תחבורה לעיר הבאה
+        const feasibleTransports = [];
+        for (let transport of transportOptions) {
             const cost = await calculateCost(currentLocation, nextCity, transport);
-            return cost !== null && remainingBudget >= cost;
-        });
+            if (cost !== null && remainingBudget >= cost) {
+                feasibleTransports.push({ transport, cost });
+            }
+        }
 
         if (feasibleTransports.length === 0) {
             alert(`Insufficient budget to travel from ${currentLocation} to ${nextCity}. Consider increasing your budget.`);
             break;
         }
 
-        const transport = feasibleTransports[0];
-        const transportCost = await calculateCost(currentLocation, nextCity, transport);
-        remainingBudget -= transportCost;
+        const { transport, cost } = feasibleTransports[0];
+        remainingBudget -= cost;
 
         itinerary.push({
             from: currentLocation,
@@ -163,24 +182,13 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
             date: currentDate.toISOString().split("T")[0],
             transport,
             duration: dayInterval,
-            cost: transportCost
+            cost
         });
+
+        console.log(`Day ${i + 1}: Traveling from ${currentLocation} to ${nextCity} via ${transport}, Cost: ${cost}, Remaining budget: ${remainingBudget}`);
 
         currentLocation = nextCity;
         currentDate.setDate(currentDate.getDate() + dayInterval);
-    }
-
-    if (currentLocation !== startingLocation && remainingBudget > await calculateCost(currentLocation, startingLocation, transportOptions[0])) {
-        itinerary.push({
-            from: currentLocation,
-            to: startingLocation,
-            date: currentDate.toISOString().split("T")[0],
-            transport: transportOptions[0],
-            duration: 1,
-            cost: await calculateCost(currentLocation, startingLocation, transportOptions[0])
-        });
-    } else {
-        alert("Budget exceeded for return trip. Consider increasing your budget.");
     }
 
     return itinerary;
