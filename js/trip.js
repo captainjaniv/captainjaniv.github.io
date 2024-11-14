@@ -115,21 +115,23 @@ async function selectNextCity(currentCity) {
         if (!currentCoords) return null;
 
         const coordinates = `${currentCoords.lat},${currentCoords.lon}`;
-        const radius = 50000; // להגדיר רדיוס רחב יותר כדי להבטיח גיוון בערים
+        const radius = 100000; // רדיוס מורחב של 100 ק"מ כדי להרחיב את טווח החיפוש
         const response = await fetch(`https://overpass-api.de/api/interpreter?data=[out:json];node(around:${radius},${coordinates})["place"="city"]["population"];out;`);
 
         const data = await response.json();
 
-        // מציאת עיר שונה מהעיר הנוכחית עם אוכלוסייה גדולה מ-1000
-        const cities = data.elements.filter(city => city.tags && city.tags.name && city.tags.name !== currentCity);
+        // סינון רשימת הערים כדי למצוא עיר שונה
+        const cities = data.elements
+            .filter(city => city.tags && city.tags.name && city.tags.name !== currentCity)
+            .map(city => city.tags.name);
 
         if (cities.length === 0) {
             console.warn("No suitable nearby cities found");
             return null;
         }
 
-        // בחירת עיר אקראית מהרשימה
-        const nextCity = cities[Math.floor(Math.random() * cities.length)].tags.name;
+        // בחירת עיר אקראית מתוך רשימת הערים
+        const nextCity = cities[Math.floor(Math.random() * cities.length)];
         console.log(`Selected next city: ${nextCity}`);
         return nextCity;
 
@@ -150,26 +152,23 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
     const dayInterval = tripOption === "days" ? tripOptionValue : Math.floor(totalDays / numDestinations);
     let remainingBudget = budget;
 
-    console.log(`Debug: Starting location: ${currentLocation}, Total days: ${totalDays}, Budget: ${remainingBudget}`);
+    console.log(`Starting itinerary from ${currentLocation} with total days: ${totalDays} and budget: ${remainingBudget}`);
 
     for (let i = 0; i < numDestinations && remainingBudget > 0; i++) {
         const nextCity = await selectNextCity(currentLocation);
         if (!nextCity || nextCity === currentLocation) {
-            console.warn(`Failed to find a new city different from ${currentLocation}`);
+            console.warn(`No new city found. Stopping at ${currentLocation}`);
             break;
         }
 
         // בדיקת תחבורה לעיר הבאה
-        const feasibleTransports = [];
-        for (let transport of transportOptions) {
+        const feasibleTransports = transportOptions.filter(async transport => {
             const cost = await calculateCost(currentLocation, nextCity, transport);
-            if (cost !== null && remainingBudget >= cost) {
-                feasibleTransports.push({ transport, cost });
-            }
-        }
+            return cost !== null && remainingBudget >= cost;
+        });
 
         if (feasibleTransports.length === 0) {
-            alert(`Insufficient budget to travel from ${currentLocation} to ${nextCity}. Consider increasing your budget.`);
+            console.warn(`Insufficient budget to travel from ${currentLocation} to ${nextCity}.`);
             break;
         }
 
@@ -185,7 +184,7 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
             cost
         });
 
-        console.log(`Day ${i + 1}: Traveling from ${currentLocation} to ${nextCity} via ${transport}, Cost: ${cost}, Remaining budget: ${remainingBudget}`);
+        console.log(`Traveling from ${currentLocation} to ${nextCity} by ${transport}, Cost: ${cost}, Remaining budget: ${remainingBudget}`);
 
         currentLocation = nextCity;
         currentDate.setDate(currentDate.getDate() + dayInterval);
