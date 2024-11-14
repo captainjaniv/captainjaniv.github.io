@@ -92,22 +92,32 @@ function haversineDistance(coords1, coords2) {
 
 async function calculateCost(from, to, transport) {
     try {
-        const fromCoords = await getCoordinates(from);
-        const toCoords = await getCoordinates(to);
+        const response = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${from};${to}?access_token=YOUR_MAPBOX_ACCESS_TOKEN`);
         
-        if (!fromCoords || !toCoords) {
-            console.error(`Coordinates not found for ${from} or ${to}`);
+        const data = await response.json();
+        
+        if (data.routes && data.routes.length > 0) {
+            const distance = data.routes[0].distance / 1000; // המרה לק"מ
+            const pricePerKm = transportPrices[transport];
+
+            if (pricePerKm !== undefined) {
+                const cost = distance * pricePerKm;
+                console.log(`Calculated cost from ${from} to ${to} with transport ${transport}: ${cost}`);
+                return { transport, cost };
+            } else {
+                console.warn(`Price per km for transport ${transport} is undefined.`);
+                return null;
+            }
+        } else {
+            console.warn(`No route found from ${from} to ${to}`);
             return null;
         }
-
-        const distance = haversineDistance(fromCoords, toCoords);
-        const pricePerKm = transportPrices[transport];
-        return distance * pricePerKm;
     } catch (error) {
         console.error("Error calculating cost:", error);
         return null;
     }
 }
+
 
 async function selectNextCity(currentCity) {
     try {
@@ -160,21 +170,21 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
             console.warn(`No new city found. Stopping at ${currentLocation}`);
             break;
         }
-
-        // בדיקת תחבורה לעיר הבאה
-        const feasibleTransports = transportOptions.filter(async transport => {
-            const cost = await calculateCost(currentLocation, nextCity, transport);
-            return cost !== null && remainingBudget >= cost;
-        });
-
-        if (feasibleTransports.length === 0) {
+    
+        const feasibleTransport = await Promise.all(
+            transportOptions.map(async (transport) => await calculateCost(currentLocation, nextCity, transport))
+        );
+    
+        const validOptions = feasibleTransport.filter(option => option && remainingBudget >= option.cost);
+    
+        if (validOptions.length === 0) {
             console.warn(`Insufficient budget to travel from ${currentLocation} to ${nextCity}.`);
             break;
         }
-
-        const { transport, cost } = feasibleTransports[0];
+    
+        const { transport, cost } = validOptions[0];
         remainingBudget -= cost;
-
+    
         itinerary.push({
             from: currentLocation,
             to: nextCity,
@@ -183,12 +193,12 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
             duration: dayInterval,
             cost
         });
-
+    
         console.log(`Traveling from ${currentLocation} to ${nextCity} by ${transport}, Cost: ${cost}, Remaining budget: ${remainingBudget}`);
-
+        
         currentLocation = nextCity;
         currentDate.setDate(currentDate.getDate() + dayInterval);
-    }
+    }    
 
     return itinerary;
 }
