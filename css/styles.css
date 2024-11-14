@@ -120,13 +120,72 @@ header nav ul li a:hover, header #loginButton:hover {
     cursor: pointer;
 }
 
+/* Highlight the form border */
 #trip-form {
-    max-width: 500px; /* Maximum width for the form container */
-    width: 80vw; /* Form width is 80% of the viewport width */
-    margin: 20px auto; /* Center the form horizontally */
+    border: 2px solid #6A1B9A; /* Purple border to highlight */
+    border-radius: 8px;
     padding: 20px;
-    box-sizing: border-box;
-    text-align: center;
+    background-color: #ffffff; /* White background for better contrast */
+}
+
+/* Advanced settings toggle */
+#advancedSettingsToggle {
+    color: #6A1B9A;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    display: inline-block;
+    padding: 5px 10px;
+    transition: color 0.2s;
+}
+
+#advancedSettingsToggle:hover {
+    color: #FFA726; /* Change color on hover */
+}
+
+/* Advanced settings section (hidden by default) */
+#advancedSettings {
+    display: none;
+    margin-top: 10px;
+    border-top: 1px solid #6A1B9A; /* Purple border */
+    padding-top: 10px;
+}
+
+/* Transportation options styling */
+.transportation-options label {
+    color: #6A1B9A;
+    font-weight: normal;
+}
+
+.transportation-options input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Submit button styling */
+button[type="submit"] {
+    background-color: #FFA726;
+    font-size: 1.2em;
+    padding: 12px 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #e69500; /* Darker shade on hover */
+}
+
+/* Itinerary display styling */
+#itineraryContainer {
+    margin-top: 20px;
+    border-top: 2px solid #6A1B9A;
+    padding-top: 15px;
+}
+
+#itineraryContainer p, #itineraryContainer ul {
+    text-align: left;
+    margin: 0 auto;
+    color: #333;
 }
 
 #trip-form input[type="text"],

@@ -1,19 +1,22 @@
+// Transport cost rates per km
 const transportPrices = {
     flight: 0.084, 
     boat: 0.05,
     train: 0.03,
     bus: 0.02,
-    car: 0.04
+    car: 0.04,
+    taxi: 0.1
 };
 
-function updateTripOptionField() {
-    const tripOption = document.getElementById("tripOption").value;
-    const tripOptionInput = document.getElementById("tripOptionInput");
+// Over-touristed cities list (this list can be extended or modified)
+const overTouristedCities = [
+    "Barcelona", "Venice", "Amsterdam", "Dubrovnik", "Reykjavik",
+    "Florence", "Bruges", "Santorini", "Kyoto", "Prague", "Lisbon",
+    "Dublin", "Siem Reap", "Havana", "Phuket", "Cusco", "Bali",
+    "Mykonos", "Cancun", "Paris", "Vienna", "Budapest", "Salzburg"
+];
 
-    tripOptionInput.placeholder = tripOption === "days" ? "e.g., 2" : "e.g., 3";
-}
-
-// Location fetching
+// Function to get user's location for starting point
 async function fetchLocation() {
     try {
         const response = await fetch("https://ipwhois.app/json/");
@@ -30,11 +33,10 @@ async function fetchLocation() {
     }
 }
 
+// Load preferred currency (optional for advanced settings)
 async function loadCurrencies() {
     try {
         const response = await fetch("https://openexchangerates.org/api/currencies.json");
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        
         const data = await response.json();
         const currencySelect = document.getElementById("currency");
 
@@ -49,199 +51,111 @@ async function loadCurrencies() {
     }
 }
 
-// Cache for coordinates
-const cache = {};
-
-async function getCoordinates(city) {
-    if (cache[city]) return cache[city];
-
-    let cityName = city.split(",")[0].trim();
-    if (cityName.includes("-")) {
-        cityName = cityName.split("-")[0].trim();
-    }
-
+// Function to calculate transport cost between cities
+async function calculateCost(fromCity, toCity, transport) {
     try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(cityName)}&format=json&limit=1`);
-        const data = await response.json();
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${fromCity}&format=json&limit=1`);
+        const fromData = await response.json();
+        const responseTo = await fetch(`https://nominatim.openstreetmap.org/search?q=${toCity}&format=json&limit=1`);
+        const toData = await responseTo.json();
         
-        if (data && data.length > 0) {
-            cache[city] = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-            return cache[city];
-        } else {
-            console.error(`City not found: ${cityName}`);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error fetching coordinates:", error);
-        return null;
-    }
-}
-
-function haversineDistance(coords1, coords2) {
-    const R = 6371;
-    const dLat = (coords2.lat - coords1.lat) * Math.PI / 180;
-    const dLon = (coords2.lon - coords1.lon) * Math.PI / 180;
-    const lat1 = coords1.lat * Math.PI / 180;
-    const lat2 = coords2.lat * Math.PI / 180;
-
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-    return R * c;
-}
-
-async function calculateCost(from, to, transport) {
-    try {
-        const response = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${from};${to}?access_token=YOUR_MAPBOX_ACCESS_TOKEN`);
+        const fromCoords = [parseFloat(fromData[0].lat), parseFloat(fromData[0].lon)];
+        const toCoords = [parseFloat(toData[0].lat), parseFloat(toData[0].lon)];
         
-        const data = await response.json();
-        
-        if (data.routes && data.routes.length > 0) {
-            const distance = data.routes[0].distance / 1000; // המרה לק"מ
-            const pricePerKm = transportPrices[transport];
-
-            if (pricePerKm !== undefined) {
-                const cost = distance * pricePerKm;
-                console.log(`Calculated cost from ${from} to ${to} with transport ${transport}: ${cost}`);
-                return { transport, cost };
-            } else {
-                console.warn(`Price per km for transport ${transport} is undefined.`);
-                return null;
-            }
-        } else {
-            console.warn(`No route found from ${from} to ${to}`);
-            return null;
-        }
+        const distance = haversineDistance(fromCoords, toCoords);
+        return distance * (transportPrices[transport] || 0);
     } catch (error) {
         console.error("Error calculating cost:", error);
         return null;
     }
 }
 
+// Calculate distance between two lat-lon coordinates
+function haversineDistance(coords1, coords2) {
+    const R = 6371; // Earth's radius in km
+    const [lat1, lon1] = coords1.map(deg => deg * (Math.PI / 180));
+    const [lat2, lon2] = coords2.map(deg => deg * (Math.PI / 180));
 
-async function selectNextCity(currentCity) {
-    try {
-        const currentCoords = await getCoordinates(currentCity);
-        if (!currentCoords) return null;
-
-        const coordinates = `${currentCoords.lat},${currentCoords.lon}`;
-        const radius = 100000; // רדיוס מורחב של 100 ק"מ כדי להרחיב את טווח החיפוש
-        const response = await fetch(`https://overpass-api.de/api/interpreter?data=[out:json];node(around:${radius},${coordinates})["place"="city"]["population"];out;`);
-
-        const data = await response.json();
-
-        // סינון רשימת הערים כדי למצוא עיר שונה
-        const cities = data.elements
-            .filter(city => city.tags && city.tags.name && city.tags.name !== currentCity)
-            .map(city => city.tags.name);
-
-        if (cities.length === 0) {
-            console.warn("No suitable nearby cities found");
-            return null;
-        }
-
-        // בחירת עיר אקראית מתוך רשימת הערים
-        const nextCity = cities[Math.floor(Math.random() * cities.length)];
-        console.log(`Selected next city: ${nextCity}`);
-        return nextCity;
-
-    } catch (error) {
-        console.error("Error selecting next city:", error);
-        return null;
-    }
+    const dLat = lat2 - lat1;
+    const dLon = lon2 - lon1;
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// Generate itinerary based on form input
 async function createItinerary({ startingLocation, departureDate, endDate, budget, transportOptions }) {
     const itinerary = [];
     let currentLocation = startingLocation;
     let currentDate = new Date(departureDate);
-    const totalDays = Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24));
-    const tripOption = document.getElementById("tripOption").value;
-    const tripOptionValue = parseInt(document.getElementById("tripOptionInput").value);
-    const numDestinations = tripOption === "destinations" ? tripOptionValue : Math.floor(totalDays / tripOptionValue);
-    const dayInterval = tripOption === "days" ? tripOptionValue : Math.floor(totalDays / numDestinations);
+    const totalDays = Math.ceil((endDate - departureDate) / (1000 * 60 * 60 * 24));
+    
+    const dayInterval = 2;
+    const numDestinations = Math.floor(totalDays / dayInterval);
     let remainingBudget = budget;
 
-    console.log(`Starting itinerary from ${currentLocation} with total days: ${totalDays} and budget: ${remainingBudget}`);
-
     for (let i = 0; i < numDestinations && remainingBudget > 0; i++) {
-        const nextCity = await selectNextCity(currentLocation);
-        if (!nextCity || nextCity === currentLocation) {
-            console.warn(`No new city found. Stopping at ${currentLocation}`);
-            break;
-        }
-    
-        const feasibleTransport = await Promise.all(
-            transportOptions.map(async (transport) => await calculateCost(currentLocation, nextCity, transport))
-        );
-    
-        const validOptions = feasibleTransport.filter(option => option && remainingBudget >= option.cost);
-    
-        if (validOptions.length === 0) {
-            console.warn(`Insufficient budget to travel from ${currentLocation} to ${nextCity}.`);
-            break;
-        }
-    
-        const { transport, cost } = validOptions[0];
-        remainingBudget -= cost;
-    
+        const nextCity = await getNextCity(currentLocation);
+        if (!nextCity) break;
+
+        const transport = transportOptions[0];
+        const transportCost = await calculateCost(currentLocation, nextCity, transport);
+        remainingBudget -= transportCost;
+
         itinerary.push({
             from: currentLocation,
             to: nextCity,
             date: currentDate.toISOString().split("T")[0],
             transport,
             duration: dayInterval,
-            cost
+            cost: transportCost
         });
-    
-        console.log(`Traveling from ${currentLocation} to ${nextCity} by ${transport}, Cost: ${cost}, Remaining budget: ${remainingBudget}`);
-        
+
         currentLocation = nextCity;
         currentDate.setDate(currentDate.getDate() + dayInterval);
-    }    
+    }
+
+    // Return to starting location if budget permits
+    if (remainingBudget > 0) {
+        const transportCost = await calculateCost(currentLocation, startingLocation, transportOptions[0]);
+        itinerary.push({
+            from: currentLocation,
+            to: startingLocation,
+            date: currentDate.toISOString().split("T")[0],
+            transport: transportOptions[0],
+            duration: 1,
+            cost: transportCost
+        });
+    }
 
     return itinerary;
 }
 
-async function fetchActivities(city) {
+// Function to select the next city, avoiding over-touristed ones
+async function getNextCity(currentCity) {
     try {
-        const cityCoords = await getCoordinates(city);
-        if (!cityCoords) {
-            return ["No activities found for this city"];
-        }
-
-        const query = `
-            [out:json];
-            node(around:5000, ${cityCoords.lat}, ${cityCoords.lon})
-            ["tourism"];
-            out 10;`;
-
-        const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-        const data = await response.json();
-
-        const activities = data.elements.map(element => element.tags.name).filter(Boolean);
-        return activities.length ? activities : ["No activities found"];
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${currentCity}&format=json&limit=10`);
+        const cityData = await response.json();
+        
+        const validCities = cityData.filter(city => !overTouristedCities.includes(city.display_name));
+        return validCities.length ? validCities[Math.floor(Math.random() * validCities.length)].display_name : null;
     } catch (error) {
-        console.error("Error fetching activities:", error);
-        return ["No activities found"];
+        console.error("Error fetching next city:", error);
+        return null;
     }
 }
 
+// Display itinerary to user
 async function displayItinerary(itinerary, container) {
     container.innerHTML = "<h2>Your Itinerary:</h2>";
-    for (const [index, leg] of itinerary.entries()) {
-        const activities = await fetchActivities(leg.to);
-        const activityList = activities.map(activity => `<li>${activity}</li>`).join("");
-
-        const legInfo = `
+    itinerary.forEach((leg, index) => {
+        container.innerHTML += `
             <p>Day ${index + 1}: From ${leg.from} to ${leg.to} on ${leg.date} by ${leg.transport} - Cost: ${leg.cost.toFixed(2)}$</p>
-            <ul>Activities:
-                ${activityList}
-            </ul>`;
-        container.innerHTML += legInfo;
-    }
+        `;
+    });
 }
 
+// Event listener for form submission
 document.addEventListener("DOMContentLoaded", () => {
     fetchLocation();
     loadCurrencies();
@@ -250,33 +164,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const itineraryContainer = document.createElement("div");
     document.body.appendChild(itineraryContainer);
 
-    const tripOptionElement = document.getElementById("tripOption");
-    if (tripOptionElement) {
-        tripOptionElement.addEventListener("change", updateTripOptionField);
-    } else {
-        console.error("tripOption element not found");
-    }
-
     if (tripPlannerForm) {
         tripPlannerForm.addEventListener("submit", async (event) => {
             event.preventDefault();
-            const startingLocation = document.getElementById("location")?.value || "";
+            const startingLocation = document.getElementById("location").value;
             const departureDate = new Date(document.getElementById("start-date").value);
             const endDate = new Date(document.getElementById("end-date").value);
-            const budget = parseFloat(document.getElementById("budget")?.value || 0);
+            const budget = parseFloat(document.getElementById("budget").value);
             const transportOptions = Array.from(document.querySelectorAll("input[name='transportation']:checked")).map(el => el.value);
 
-            const tripOption = tripOptionElement.value;
-            const tripOptionInputElement = document.getElementById("tripOptionInput");
-            const tripOptionValue = parseInt(tripOptionInputElement.value);
-
             const itinerary = await createItinerary({
-                startingLocation, departureDate, endDate, budget, transportOptions, daysPerDestination: tripOption === "days" ? tripOptionValue : null, destinationsCount: tripOption === "destinations" ? tripOptionValue : null
+                startingLocation, departureDate, endDate, budget, transportOptions
             });
 
             displayItinerary(itinerary, itineraryContainer);
         });
-    } else {
-        console.error("tripPlannerForm element not found");
     }
 });

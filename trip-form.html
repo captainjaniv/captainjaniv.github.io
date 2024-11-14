@@ -46,46 +46,41 @@
     
 
     <main>
-        <section id="trip-form">
-            <h1>Plan Your Trip</h1>
-            <form id="tripPlannerForm">
+        <section id="trip-form-section">
+            <form id="trip-form">
                 <label for="location">Starting Location:</label>
-                <input type="text" id="location" name="location" placeholder="Enter starting location" required>
-        
-                <label for="start-date">Departure Date:</label>
-                <input type="date" id="start-date" name="start-date" required>
+                <input type="text" id="location" name="location" required>
 
-                <label for="end-date">Return Date:</label>
-                <input type="date" id="end-date" name="end-date" required>
+                <label for="tripDates">Travel Dates:</label>
+                <input type="text" id="tripDates" name="tripDates" placeholder="YYYY-MM-DD - YYYY-MM-DD" required>
 
-                <!-- Choice between minimum days or number of destinations -->
-                <p>Would you like to specify:</p>
-                <label for="tripOption">Trip Option:</label>
-                <select id="tripOption" name="tripOption" onchange="updateTripOptionField()">
-                    <option value="days">Minimum Days per Destination</option>
-                    <option value="destinations">Number of Destinations</option>
-                </select>
-                <input type="number" id="tripOptionInput" name="tripOptionInput" placeholder="e.g., 2">
-                
-                <label for="currency">Preferred Currency:</label>
-                <select id="currency" name="currency" required></select>
-        
-                <label for="budget">Budget:(<span id="currencySymbol">$</span>)</label>
-                <input type="number" id="budget" name="budget" placeholder="Enter amount" required>
-        
-                <label>Preferred Transportation:</label>
-                <div class="transportation-options">
-                    <label><input type="checkbox" name="transportation" value="flight" checked> Flight</label>
-                    <label><input type="checkbox" name="transportation" value="train"> Train</label>
-                    <label><input type="checkbox" name="transportation" value="bus"> Bus</label>
-                    <label><input type="checkbox" name="transportation" value="car"> Rental Car</label>
-                    <label><input type="checkbox" name="transportation" value="boat"> Boat</label>
+                <label for="budget">Budget ($):</label>
+                <input type="number" id="budget" name="budget" required>
+
+                <div id="advancedSettingsToggle">Advanced Settings &#9660;</div>
+                <div id="advancedSettings">
+                    <label for="tripOptionInput">Days per Destination:</label>
+                    <input type="number" id="tripOptionInput" name="tripOptionInput" placeholder="e.g., 2" min="1">
+
+                    <label for="returnToStart">
+                        <input type="checkbox" id="returnToStart" checked> Return to Start Location
+                    </label>
+
+                    <label>Preferred Transport:</label>
+                    <div class="transportation-options">
+                        <label><input type="checkbox" name="transport" value="flight" checked> Flight</label>
+                        <label><input type="checkbox" name="transport" value="train"> Train</label>
+                        <label><input type="checkbox" name="transport" value="bus"> Bus</label>
+                        <label><input type="checkbox" name="transport" value="car"> Car</label>
+                        <label><input type="checkbox" name="transport" value="boat"> Boat</label>
+                        <label><input type="checkbox" name="transport" value="taxi"> Taxi</label>
+                    </div>
                 </div>
-        
+
                 <button type="submit">Plan My Trip</button>
             </form>
+            <div id="itineraryContainer"></div>
         </section>
-           
     </main>
 
     <footer>
