@@ -83,7 +83,22 @@ function haversineDistance(coords1, coords2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Generate itinerary based on form input
+// Function to select the next city, avoiding the same destination and tourist overload
+async function getNextCity(currentCity) {
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${currentCity}&format=json&limit=10`);
+        const cityData = await response.json();
+        
+        // Filter cities to exclude over-touristed ones and those too close to current
+        const validCities = cityData.filter(city => !overTouristedCities.includes(city.display_name) && city.display_name !== currentCity);
+        return validCities.length ? validCities[Math.floor(Math.random() * validCities.length)].display_name : null;
+    } catch (error) {
+        console.error("Error fetching next city:", error);
+        return null;
+    }
+}
+
+// Then, modify the createItinerary function slightly to ensure no repetition:
 async function createItinerary({ startingLocation, departureDate, endDate, budget, transportOptions }) {
     const itinerary = [];
     let currentLocation = startingLocation;
@@ -95,7 +110,12 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
     let remainingBudget = budget;
 
     for (let i = 0; i < numDestinations && remainingBudget > 0; i++) {
-        const nextCity = await getNextCity(currentLocation);
+        let nextCity;
+        // Avoid current city repetition
+        do {
+            nextCity = await getNextCity(currentLocation);
+        } while (nextCity === currentLocation);
+
         if (!nextCity) break;
 
         const transport = transportOptions[0];
@@ -129,20 +149,6 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
     }
 
     return itinerary;
-}
-
-// Function to select the next city, avoiding over-touristed ones
-async function getNextCity(currentCity) {
-    try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${currentCity}&format=json&limit=10`);
-        const cityData = await response.json();
-        
-        const validCities = cityData.filter(city => !overTouristedCities.includes(city.display_name));
-        return validCities.length ? validCities[Math.floor(Math.random() * validCities.length)].display_name : null;
-    } catch (error) {
-        console.error("Error fetching next city:", error);
-        return null;
-    }
 }
 
 // Display itinerary to user
