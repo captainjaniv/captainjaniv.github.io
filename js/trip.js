@@ -160,6 +160,21 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchLocation();
     loadCurrencies();
 
+    // הגדרת Flatpickr לשדה טווח התאריכים
+    flatpickr("#date-range", {
+        mode: "range",
+        minDate: "today",
+        dateFormat: "d/m/Y", // פורמט dd/mm/yyyy
+        onClose: function(selectedDates) {
+            if (selectedDates.length === 2) {
+                const startDate = selectedDates[0];
+                const endDate = selectedDates[1];
+                document.getElementById("start-date").value = startDate.toISOString().split("T")[0];
+                document.getElementById("end-date").value = endDate.toISOString().split("T")[0];
+            }
+        }
+    });
+
     const tripPlannerForm = document.getElementById("tripPlannerForm");
     const itineraryContainer = document.createElement("div");
     document.body.appendChild(itineraryContainer);
@@ -181,3 +196,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+

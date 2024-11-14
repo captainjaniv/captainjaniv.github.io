@@ -188,20 +188,6 @@ button[type="submit"]:hover {
     color: #333;
 }
 
-#trip-form input[type="text"],
-#trip-form input[type="number"],
-#trip-form input[type="password"],
-#trip-form select {
-    width: 100%; /* Make input fields take the full width of the form container */
-    max-width: 400px; /* Maximum width for each input */
-    padding: 10px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    border: 1px solid #b0c4de; /* Light gray border */
-    border-radius: 4px;
-}
-
-
 h1 {
     color: #FFA726;
 }
