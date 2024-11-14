@@ -50,6 +50,9 @@
     <main>
         <section id="trip-form-section">
             <form id="trip-form">
+                <h2>Plan Your Trip</h2>
+                
+                <!-- תאריך התחלה וסיום כטווח תאריכים -->
                 <div>
                     <label for="date-range">Choose Trip Dates:</label>
                     <input type="text" id="date-range" placeholder="Select date range" required>
@@ -57,40 +60,53 @@
                     <input type="hidden" id="start-date">
                     <input type="hidden" id="end-date">
                 </div>
+        
+                <!-- מיקום התחלתי -->
                 <div>
                     <label for="location">Starting Location:</label>
-                    <input type="text" id="location" required>
+                    <input type="text" id="location" placeholder="Detecting location..." required>
                 </div>
+        
+                <!-- תקציב -->
                 <div>
-                    <label for="budget">Budget:</label>
-                    <input type="number" id="budget" required>
+                    <label for="budget">Budget (USD):</label>
+                    <input type="number" id="budget" placeholder="Enter budget" required>
                 </div>
+        
                 <br/>
-
+        
+                <!-- הגדרות מתקדמות -->
                 <div id="advancedSettingsToggle">Advanced Settings &#9660;</div>
                 <div id="advancedSettings">
-                    <label for="tripOptionInput">Days per Destination:</label>
-                    <input type="number" id="tripOptionInput" name="tripOptionInput" placeholder="e.g., 2" min="1">
-
-                    <label for="returnToStart">
-                        <input type="checkbox" id="returnToStart" checked> Return to Start Location
-                    </label>
-
-                    <label>Preferred Transport:</label>
-                    <div class="transportation-options">
-                        <label><input type="checkbox" name="transport" value="flight" checked> Flight</label>
-                        <label><input type="checkbox" name="transport" value="train"> Train</label>
-                        <label><input type="checkbox" name="transport" value="bus"> Bus</label>
-                        <label><input type="checkbox" name="transport" value="car"> Car</label>
-                        <label><input type="checkbox" name="transport" value="boat"> Boat</label>
-                        <label><input type="checkbox" name="transport" value="taxi"> Taxi</label>
+                    <div>
+                        <label for="tripOptionInput">Days per Destination:</label>
+                        <input type="number" id="tripOptionInput" name="tripOptionInput" placeholder="e.g., 2" min="1">
+                    </div>
+        
+                    <div>
+                        <label for="returnToStart">
+                            <input type="checkbox" id="returnToStart" checked> Return to Start Location
+                        </label>
+                    </div>
+        
+                    <div>
+                        <label>Preferred Transport:</label>
+                        <div class="transportation-options">
+                            <label><input type="checkbox" name="transport" value="flight" checked> Flight</label>
+                            <label><input type="checkbox" name="transport" value="train"> Train</label>
+                            <label><input type="checkbox" name="transport" value="bus"> Bus</label>
+                            <label><input type="checkbox" name="transport" value="car"> Car</label>
+                            <label><input type="checkbox" name="transport" value="boat"> Boat</label>
+                            <label><input type="checkbox" name="transport" value="taxi"> Taxi</label>
+                        </div>
                     </div>
                 </div>
-
+        
                 <button type="submit">Plan My Trip</button>
             </form>
             <div id="itineraryContainer"></div>
         </section>
+        
     </main>
 
     <footer>

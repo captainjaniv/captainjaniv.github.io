@@ -120,23 +120,49 @@ header nav ul li a:hover, header #loginButton:hover {
     cursor: pointer;
 }
 
+/* Centered Form Styling */
+#trip-form-section {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Highlight the form border */
 #trip-form {
     border: 2px solid #6A1B9A; /* Purple border to highlight */
     border-radius: 8px;
     padding: 20px;
-    background-color: #ffffff; /* White background for better contrast */
+    /* background-color: #ffffff; White background for better contrast */
 }
 
-/* Advanced settings toggle */
+#trip-form h2 {
+    color: #6A1B9A;
+}
+
+#trip-form label {
+    display: block;
+    margin-top: 10px;
+    color: #6A1B9A;
+    font-weight: bold;
+}
+
+#trip-form input[type="text"],
+#trip-form input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #b0c4de;
+    border-radius: 4px;
+}
+
 #advancedSettingsToggle {
     color: #6A1B9A;
     cursor: pointer;
-    font-weight: bold;
     margin-top: 10px;
-    display: inline-block;
-    padding: 5px 10px;
-    transition: color 0.2s;
+    font-weight: bold;
 }
 
 #advancedSettingsToggle:hover {
@@ -147,8 +173,6 @@ header nav ul li a:hover, header #loginButton:hover {
 #advancedSettings {
     display: none;
     margin-top: 10px;
-    border-top: 1px solid #6A1B9A; /* Purple border */
-    padding-top: 10px;
 }
 
 /* Transportation options styling */
@@ -165,14 +189,16 @@ header nav ul li a:hover, header #loginButton:hover {
 button[type="submit"] {
     background-color: #FFA726;
     font-size: 1.2em;
-    padding: 12px 20px;
-    margin-top: 20px;
-    border-radius: 8px;
-    transition: background-color 0.3s;
+    padding: 10px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
 }
 
 button[type="submit"]:hover {
-    background-color: #e69500; /* Darker shade on hover */
+    background-color: #e69500;
 }
 
 /* Itinerary display styling */
