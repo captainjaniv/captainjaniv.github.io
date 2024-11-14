@@ -1,4 +1,3 @@
-// משתנים כלליים של ה-API
 const transportPrices = {
     flight: 0.084, 
     boat: 0.05,
@@ -14,7 +13,7 @@ function updateTripOptionField() {
     tripOptionInput.placeholder = tripOption === "days" ? "e.g., 2" : "e.g., 3";
 }
 
-// פונקציה לאיתור מיקום המשתמש והגדרת מיקום התחלתי בטופס
+// Location fetching
 async function fetchLocation() {
     try {
         const response = await fetch("https://ipwhois.app/json/");
@@ -31,7 +30,6 @@ async function fetchLocation() {
     }
 }
 
-// פונקציה לטעינת רשימת מטבעות
 async function loadCurrencies() {
     try {
         const response = await fetch("https://openexchangerates.org/api/currencies.json");
@@ -51,10 +49,9 @@ async function loadCurrencies() {
     }
 }
 
-// מטמון נתונים
+// Cache for coordinates
 const cache = {};
 
-// פונקציה לקבלת קואורדינטות של עיר מ-OpenStreetMap/Nominatim
 async function getCoordinates(city) {
     if (cache[city]) return cache[city];
 
@@ -80,7 +77,19 @@ async function getCoordinates(city) {
     }
 }
 
-// פונקציה לחישוב עלות נסיעה בין שתי ערים
+function haversineDistance(coords1, coords2) {
+    const R = 6371;
+    const dLat = (coords2.lat - coords1.lat) * Math.PI / 180;
+    const dLon = (coords2.lon - coords1.lon) * Math.PI / 180;
+    const lat1 = coords1.lat * Math.PI / 180;
+    const lat2 = coords2.lat * Math.PI / 180;
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    return R * c;
+}
+
 async function calculateCost(from, to, transport) {
     try {
         const fromCoords = await getCoordinates(from);
@@ -100,21 +109,6 @@ async function calculateCost(from, to, transport) {
     }
 }
 
-// פונקציה לחישוב מרחק בין קואורדינטות
-function haversineDistance(coords1, coords2) {
-    const R = 6371; // קוטר כדור הארץ בק"מ
-    const dLat = (coords2.lat - coords1.lat) * Math.PI / 180;
-    const dLon = (coords2.lon - coords1.lon) * Math.PI / 180;
-    const lat1 = coords1.lat * Math.PI / 180;
-    const lat2 = coords2.lat * Math.PI / 180;
-
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-    return R * c;
-}
-
-// פונקציה לבחירת עיר יעד חדשה על פי קריטריונים נוספים
 async function selectNextCity(currentCity) {
     try {
         const currentCoords = await getCoordinates(currentCity);
@@ -130,7 +124,6 @@ async function selectNextCity(currentCity) {
     }
 }
 
-// פונקציה ליצירת מסלול טיול
 async function createItinerary({ startingLocation, departureDate, endDate, budget, transportOptions }) {
     const itinerary = [];
     let currentLocation = startingLocation;
@@ -193,7 +186,30 @@ async function createItinerary({ startingLocation, departureDate, endDate, budge
     return itinerary;
 }
 
-// פונקציה להצגת המסלול עם פעילויות
+async function fetchActivities(city) {
+    try {
+        const cityCoords = await getCoordinates(city);
+        if (!cityCoords) {
+            return ["No activities found for this city"];
+        }
+
+        const query = `
+            [out:json];
+            node(around:5000, ${cityCoords.lat}, ${cityCoords.lon})
+            ["tourism"];
+            out 10;`;
+
+        const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        const activities = data.elements.map(element => element.tags.name).filter(Boolean);
+        return activities.length ? activities : ["No activities found"];
+    } catch (error) {
+        console.error("Error fetching activities:", error);
+        return ["No activities found"];
+    }
+}
+
 async function displayItinerary(itinerary, container) {
     container.innerHTML = "<h2>Your Itinerary:</h2>";
     for (const [index, leg] of itinerary.entries()) {
@@ -209,7 +225,6 @@ async function displayItinerary(itinerary, container) {
     }
 }
 
-// מאזין לטופס תכנון הטיול
 document.addEventListener("DOMContentLoaded", () => {
     fetchLocation();
     loadCurrencies();
