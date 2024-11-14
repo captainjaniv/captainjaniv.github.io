@@ -121,13 +121,19 @@ async function calculateCost(from, to, transport) {
     }
 }
 
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // פונקציה לבחירת עיר יעד חדשה (רנדומלית) על פי קריטריונים נוספים
 async function selectNextCity(currentCity) {
     try {
+        await delay(2000); // השהייה של 2 שניות
         const currentCoords = await getCoordinates(currentCity);
         if (!currentCoords) return null;
 
-        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/locations/${currentCoords.lat}${currentCoords.lon}/nearbyCities?radius=20&limit=10&minPopulation=1000&sort=population`, {
+        const coordinates = `${currentCoords.lat},${currentCoords.lon}`;
+        const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/locations/${coordinates}/nearbyCities?radius=20&limit=10&minPopulation=1000&sort=population`, {
             method: "GET",
             headers: {
                 "x-rapidapi-key": GEO_DB_API_KEY,
@@ -137,7 +143,6 @@ async function selectNextCity(currentCity) {
 
         const data = await response.json();
         if (data && data.data && data.data.length > 0) {
-            // סינון התוצאות כדי לכלול רק ערים שיש להן מקומות לינה קרובים (נניח 20 ק"מ)
             const cityWithLodging = data.data.find(city => city.distance < 20);
             return cityWithLodging ? cityWithLodging.city : null;
         } else {
@@ -149,6 +154,7 @@ async function selectNextCity(currentCity) {
         return null;
     }
 }
+
 
 
 // פונקציה ליצירת מסלול טיול
