@@ -155,45 +155,62 @@ async function displayItinerary(itinerary, container) {
     });
 }
 
-// Event listener for form submission
 document.addEventListener("DOMContentLoaded", () => {
     fetchLocation();
-    loadCurrencies();
+    loadCurrencies(); // קריאת מטבעות מתווספת כאן
 
-    // הגדרת Flatpickr לשדה טווח התאריכים
+    // הפעלת טווח תאריכים
     flatpickr("#date-range", {
         mode: "range",
-        minDate: "today",
-        dateFormat: "d/m/Y", // פורמט dd/mm/yyyy
-        onClose: function(selectedDates) {
+        dateFormat: "d/m/Y",
+        onChange: function(selectedDates) {
             if (selectedDates.length === 2) {
-                const startDate = selectedDates[0];
-                const endDate = selectedDates[1];
-                document.getElementById("start-date").value = startDate.toISOString().split("T")[0];
-                document.getElementById("end-date").value = endDate.toISOString().split("T")[0];
+                document.getElementById("start-date").value = selectedDates[0].toISOString();
+                document.getElementById("end-date").value = selectedDates[1].toISOString();
             }
         }
     });
 
-    const tripPlannerForm = document.getElementById("tripPlannerForm");
-    const itineraryContainer = document.createElement("div");
-    document.body.appendChild(itineraryContainer);
+    // הצגת תפריט הגדרות מתקדמות
+    const advancedSettingsToggle = document.getElementById("advancedSettingsToggle");
+    const advancedSettings = document.getElementById("advancedSettings");
 
-    if (tripPlannerForm) {
-        tripPlannerForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const startingLocation = document.getElementById("location").value;
-            const departureDate = new Date(document.getElementById("start-date").value);
-            const endDate = new Date(document.getElementById("end-date").value);
-            const budget = parseFloat(document.getElementById("budget").value);
-            const transportOptions = Array.from(document.querySelectorAll("input[name='transportation']:checked")).map(el => el.value);
+    advancedSettingsToggle.addEventListener("click", () => {
+        if (advancedSettings.style.display === "none" || !advancedSettings.style.display) {
+            advancedSettings.style.display = "block";
+            advancedSettingsToggle.innerHTML = "Hide Advanced Settings &#9650;";
+        } else {
+            advancedSettings.style.display = "none";
+            advancedSettingsToggle.innerHTML = "Advanced Settings &#9660;";
+        }
+    });
 
-            const itinerary = await createItinerary({
-                startingLocation, departureDate, endDate, budget, transportOptions
-            });
+    // טיפול בטופס - שליחת נתונים
+    document.getElementById("trip-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-            displayItinerary(itinerary, itineraryContainer);
+        // שליפת ערכים מהטופס
+        const startingLocation = document.getElementById("location").value;
+        const departureDate = document.getElementById("start-date").value;
+        const endDate = document.getElementById("end-date").value;
+        const budget = parseFloat(document.getElementById("budget").value);
+        const transportOptions = Array.from(
+            document.querySelectorAll("input[name='transport']:checked")
+        ).map(el => el.value);
+
+        const tripOption = document.getElementById("tripOption").value;
+        const tripOptionValue = parseInt(document.getElementById("tripOptionInput").value) || 2;
+        const returnToStart = document.getElementById("returnToStart").checked;
+        const preferredCurrency = document.getElementById("currency").value;
+
+        const daysPerDestination = tripOption === "days" ? tripOptionValue : null;
+        const destinationsCount = tripOption === "destinations" ? tripOptionValue : null;
+
+        // יצירת המסלול
+        const itinerary = await createItinerary({
+            startingLocation, departureDate, endDate, budget, transportOptions, daysPerDestination, destinationsCount, returnToStart, preferredCurrency
         });
-    }
-});
 
+        displayItinerary(itinerary, document.getElementById("itineraryContainer"));
+    });
+});

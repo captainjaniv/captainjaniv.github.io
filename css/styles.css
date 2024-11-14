@@ -19,7 +19,7 @@ header {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 10px;
+    padding: 0 15px;
     box-sizing: border-box; /* כדי להימנע מחריגה מרוחב המסך */
 }
 
@@ -120,22 +120,20 @@ header nav ul li a:hover, header #loginButton:hover {
     cursor: pointer;
 }
 
-/* Centered Form Styling */
 #trip-form-section {
-    max-width: 500px;
-    margin: 30px auto;
+    display: flex;
+    justify-content: center;
     padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Highlight the form border */
 #trip-form {
-    border: 2px solid #6A1B9A; /* Purple border to highlight */
-    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    margin: auto;
+    border: 2px solid #6A1B9A;
     padding: 20px;
-    /* background-color: #ffffff; White background for better contrast */
+    border-radius: 8px;
+    background-color: #fff;
 }
 
 #trip-form h2 {
@@ -173,6 +171,8 @@ header nav ul li a:hover, header #loginButton:hover {
 #advancedSettings {
     display: none;
     margin-top: 10px;
+    border-top: 1px solid #6A1B9A;
+    padding-top: 10px;
 }
 
 /* Transportation options styling */
@@ -275,9 +275,7 @@ button:hover {
 /* Footer */
 footer {
     background-color: #6A1B9A;
-    color: white;
     text-align: center;
-    padding: 10px 0;
     position: relative;
     bottom: 0;
     width: 100%;
